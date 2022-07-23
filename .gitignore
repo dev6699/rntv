@@ -61,3 +61,7 @@ buck-out/
 
 # CocoaPods
 /ios/Pods/
+
+src/services/tv/*
+!src/services/tv/index.ts
+!src/services/tv/sample.ts
