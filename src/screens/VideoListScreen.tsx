@@ -24,6 +24,7 @@ export const VideoListScreen = () => {
       renderItem={({ item, index }) => {
         return (
           <VideoCard
+            style={{ flex: isPortrait ? 0.5 : 1 }}
             video={item}
             key={item.title + index}
             onVideoPress={() => actions.showVideoDetail(item)}

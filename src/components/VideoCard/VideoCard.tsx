@@ -1,22 +1,27 @@
 import React, { useRef } from 'react';
-import { Animated, Easing, Text, TouchableHighlight, View } from 'react-native';
+import {
+  Animated,
+  Easing,
+  Text,
+  TouchableHighlight,
+  View,
+  ViewStyle,
+} from 'react-native';
 import { useOrientation } from '../../hooks';
 import type { TVideo } from '../../services';
 
 import { imgAssets } from '../../utils';
 
 export const VideoCard: React.FC<{
-  h?: number;
-  w?: number;
+  style?: ViewStyle;
   video: TVideo;
   onVideoPress: () => void;
-}> = ({ h, w, video, onVideoPress }) => {
-  const { height, width } = useOrientation();
+}> = ({ style, video, onVideoPress }) => {
+  const { height, width, isPortrait } = useOrientation();
   const { img, title, status } = video;
 
-  const cardHeight =
-    height > width ? (w || width / 3) * 1.1 : h || height / 2.5;
-  const cardWidth = height > width ? h || width / 2 : (w || width / 4) * 1.1;
+  const cardHeight = isPortrait ? (width / 3) * 1.1 : height / 2.5;
+  const cardWidth = isPortrait ? width / 2 : (width / 4) * 1.1;
 
   const animations = useRef({
     scale: new Animated.Value(1),
@@ -68,6 +73,7 @@ export const VideoCard: React.FC<{
         flex: 1,
         width: cardWidth,
         height: cardHeight,
+        ...style,
       }}>
       <View
         style={{
