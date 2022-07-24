@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
 import type { TNavContext } from "./useNav";
-import { TVideo, TVideosRec, TVideoWithSource, TVService } from "../services";
+import { TVideo, TVideosRec, TVideoWithSource, TVService, TVideoProvider } from "../services";
 
 export type TVideoContext = ReturnType<typeof useVideo>
 export const VideoContext = React.createContext<TVideoContext>({} as TVideoContext);
@@ -11,6 +11,8 @@ export const useVideoContext = () => React.useContext(VideoContext);
 export const useVideo = (nav: TNavContext) => {
     const [init, setInit] = useState(false)
     const [loading, setLoading] = useState(false);
+    const [error, setError] = useState('');
+
 
     const [provider, setProvider] = useState<string>(Object.keys(TVService)[0])
 
@@ -32,24 +34,41 @@ export const useVideo = (nav: TNavContext) => {
                 return
             }
 
-            if (init) {
-                setLoading(true)
-            }
-
-            const videos = await tvService.getHomeVideoList()
-            setVideos(videos)
+            const videos = await withErrBound(tvService.getHomeVideoList())
+            setVideos(videos || [])
             await loadFavourite()
             setSearchVideos([])
-            setLoading(false)
             if (!init) {
                 setInit(true)
             }
         })()
     }, [provider]);
 
-    const getVideoCategory = async (path: string) => {
+    const withErrBound = async<T extends keyof TVideoProvider, P = ReturnType<TVideoProvider[T]>>(
+        p: P, checkFunc?: (res: Awaited<P>) => void) => {
         setLoading(true)
-        const videos = await tvService.getVideoCategory(path)
+        try {
+            const result = await p
+            if (checkFunc) {
+                checkFunc(result)
+            }
+            return result
+        } catch (err) {
+            if (err instanceof Error) {
+                setError(err.message)
+            } else {
+                setError('Something went wrong.')
+            }
+        } finally {
+            setLoading(false)
+        }
+    }
+
+    const getVideoCategory = async (path: string) => {
+        const videos = await withErrBound(tvService.getVideoCategory(path))
+        if (!videos) {
+            return
+        }
 
         if (videos.length === 1) {
             setVideosList(videos)
@@ -58,38 +77,47 @@ export const useVideo = (nav: TNavContext) => {
             setVideosCategory(videos)
             nav.setPage('category')
         }
-        setLoading(false)
     }
 
     const getVideoCategoryList = async (path: string) => {
-        setLoading(true)
-        const videos = await tvService.getVideoCategoryList(path)
-        setVideosList(videos)
+        const videos = await withErrBound(tvService.getVideoCategoryList(path))
+        setVideosList(videos || [])
         nav.setPage('list')
-        setLoading(false)
     }
 
     const playVideo = async (pageUrl: string) => {
-        setLoading(true);
-        const url = await tvService.getVideoUrl(pageUrl);
+        const url = await withErrBound(tvService.getVideoUrl(pageUrl),
+            (res) => {
+                if (!res) {
+                    throw new Error('Something went wrong.')
+                }
+            })
+
+        if (!url) {
+            return
+        }
+
         setPlayVideoUrl(url);
         nav.setPage('play');
-        setLoading(false);
     }
 
     const showVideoDetail = async (v: TVideo) => {
-        setLoading(true);
-        const source = await tvService.getVideoSources(v.href);
+        const source = await withErrBound(tvService.getVideoSources(v.href))
+        if (!source) {
+            return
+        }
+
         setVideoDetail({ ...v, source });
         nav.setPage('detail');
-        setLoading(false);
     }
 
     const searchVideo = async (keyword: string) => {
-        setLoading(true);
-        const result = await tvService.getVideoSearchResult(keyword);
+        const result = await withErrBound(tvService.getVideoSearchResult(keyword))
+        if (!result) {
+            return
+        }
+
         setSearchVideos(result);
-        setLoading(false);
     }
 
     const loadFavourite = async () => {
@@ -133,6 +161,7 @@ export const useVideo = (nav: TNavContext) => {
     return {
         state: {
             init,
+            error,
             videos,
             videosCategory,
             videosList,
@@ -146,6 +175,7 @@ export const useVideo = (nav: TNavContext) => {
         },
 
         actions: {
+            setError,
             playVideo,
             searchVideo,
             setProvider,

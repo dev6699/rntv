@@ -6,6 +6,7 @@ import {
   Animated,
   Easing,
   View,
+  Text,
 } from 'react-native';
 
 import { useNav, NavContext, useVideo, VideoContext } from './src/hooks';
@@ -35,10 +36,37 @@ const App = () => {
   const navState = useNav();
   const videoState = useVideo(navState);
 
+  const error = videoState.state.error;
+  useEffect(() => {
+    if (!error) {
+      return;
+    }
+
+    setTimeout(() => {
+      videoState.actions.setError('');
+    }, 1000);
+  }, [error]);
+
   return (
     <VideoContext.Provider value={videoState}>
       <NavContext.Provider value={navState}>
         <SafeAreaView style={{ flex: 1 }}>
+          {error ? (
+            <View
+              style={{
+                padding: 10,
+                alignItems: 'center',
+                backgroundColor: 'red',
+              }}>
+              <Text
+                style={{
+                  fontSize: 24,
+                  fontWeight: 'bold',
+                }}>
+                {error}
+              </Text>
+            </View>
+          ) : null}
           <Animated.View
             style={{
               flex: 1,
