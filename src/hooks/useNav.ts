@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useRef } from "react";
 import { useEffect, useState } from "react";
 import { Alert, BackHandler } from "react-native";
 
@@ -7,8 +7,23 @@ export type TNavContext = ReturnType<typeof useNav>
 export const NavContext = React.createContext<TNavContext>({} as TNavContext);
 export const useNavContext = () => React.useContext(NavContext);
 
+type TPage = 'home' | 'category' | 'list' | 'detail' | 'play'
+
 export const useNav = () => {
-    const [page, setPage] = useState<'home' | 'category' | 'list' | 'detail' | 'play'>('home');
+    const [page, _setPage] = useState<TPage>('home');
+
+    const history = useRef<TPage[]>(['home']).current
+
+    const setPage = (p: TPage) => {
+        history.push(p)
+        _setPage(p)
+    }
+
+    const popPage = () => {
+        history.pop()
+        const toPage = history[history.length - 1]
+        _setPage(toPage)
+    }
 
     useEffect(() => {
         const backAction = () => {
@@ -24,23 +39,8 @@ export const useNav = () => {
                         { text: 'YES', onPress: () => BackHandler.exitApp() },
                     ]);
                     break;
-
-                case 'category':
-                    setPage('home');
-                    break;
-
-                case 'list':
-                    setPage('category');
-                    break;
-
-                case 'detail':
-                    setPage('home');
-                    break;
-
-                case 'play':
-                    setPage('detail');
-                    break;
-
+                default:
+                    popPage()
             }
             return true;
         };

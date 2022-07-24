@@ -50,8 +50,14 @@ export const useVideo = (nav: TNavContext) => {
     const getVideoCategory = async (path: string) => {
         setLoading(true)
         const videos = await tvService.getVideoCategory(path)
-        setVideosCategory(videos)
-        nav.setPage('category')
+
+        if (videos.length === 1) {
+            setVideosList(videos)
+            nav.setPage('list')
+        } else {
+            setVideosCategory(videos)
+            nav.setPage('category')
+        }
         setLoading(false)
     }
 
