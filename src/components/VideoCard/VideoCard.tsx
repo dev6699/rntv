@@ -118,7 +118,7 @@ export const VideoCard: React.FC<{
               }}
             />
           </Animated.View>
-          {status && (
+          {status !== '' && (
             <View
               style={{
                 backgroundColor: 'rgba(52, 52, 52, 0.85)',
@@ -144,7 +144,7 @@ export const VideoCard: React.FC<{
             numberOfLines={1}
             style={{
               color: 'white',
-              fontSize: 20,
+              fontSize: 16,
             }}>
             {title}
           </Text>

@@ -1,8 +1,10 @@
 import { useWindowDimensions } from "react-native";
 
 export const useOrientation = () => {
-    const { height, width } = useWindowDimensions();
+    const { height: _height, width: _width, fontScale } = useWindowDimensions();
 
+    const height = fontScale < 1 ? _height : _height * fontScale * 0.8
+    const width = fontScale < 1 ? _width : _width * fontScale * 0.8
     const orientation = height > width ? 'PORTRAIT' : 'LANDSCAPE';
 
     const isLandscape = orientation === 'LANDSCAPE'

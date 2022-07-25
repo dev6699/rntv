@@ -28,17 +28,17 @@ export const VideoList: React.FC<{
             }}>
             <View
               style={{
+                flex: 1,
                 marginLeft: 10,
                 flexDirection: 'row',
                 alignItems: 'center',
-                justifyContent: 'space-between',
               }}>
               <Text
+                numberOfLines={1}
                 style={{
-                  textAlign: 'center',
-                  fontSize: 24,
+                  flex: 3,
+                  fontSize: 20,
                   color: 'white',
-                  marginRight: 10,
                 }}>
                 {title}
               </Text>
@@ -47,6 +47,7 @@ export const VideoList: React.FC<{
                   onPress={() => onMorePress(href)}
                   text="更多"
                   style={{
+                    flex: 1,
                     paddingVertical: 0,
                     paddingHorizontal: 10,
                   }}
