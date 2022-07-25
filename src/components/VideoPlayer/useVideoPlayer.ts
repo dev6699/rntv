@@ -205,49 +205,38 @@ export const useVideoPlayer = () => {
         ]).start();
     };
 
-    const rewind = () => {
-        if (!showControls) {
+    const actionable = (func: (player: RNVideo) => void) => {
+        if (!showControls || !duration || !videoPlayerRef.current) {
             return
         }
-        videoPlayerRef.current?.seek(Math.max(currentTime - CONFIG.ADJUST_SECOND, 0))
+        func(videoPlayerRef.current)
     }
 
-    const fforward = () => {
-        if (!showControls) {
-            return
-        }
-        videoPlayerRef.current?.seek(Math.min(currentTime + CONFIG.ADJUST_SECOND, duration))
-    }
+    const rewind = () => actionable((player) => {
+        player.seek(Math.max(currentTime - CONFIG.ADJUST_SECOND, 0))
+    })
 
-    const skipPrev = () => {
-        if (!showControls) {
-            return
-        }
+    const fforward = () => actionable((player) => {
+        player.seek(Math.min(currentTime + CONFIG.ADJUST_SECOND, duration))
+    })
+
+    const skipPrev = () => actionable((player) => {
         const chunk = Math.floor(currentTime / (duration / CONFIG.MAX_VIDEO_CHUNK))
-        videoPlayerRef.current?.seek(Math.max(((chunk - 1) * duration / CONFIG.MAX_VIDEO_CHUNK), 0))
-    }
+        player.seek(Math.max(((chunk - 1) * duration / CONFIG.MAX_VIDEO_CHUNK), 0))
+    })
 
-    const skipNext = () => {
-        if (!showControls) {
-            return
-        }
+    const skipNext = () => actionable((player) => {
         const chunk = Math.floor(currentTime / (duration / CONFIG.MAX_VIDEO_CHUNK))
-        videoPlayerRef.current?.seek(Math.min(((chunk + 1) * duration / CONFIG.MAX_VIDEO_CHUNK), duration))
-    }
+        player.seek(Math.min(((chunk + 1) * duration / CONFIG.MAX_VIDEO_CHUNK), duration))
+    })
 
-    const setPlayPause = () => {
-        if (!showControls) {
-            return
-        }
+    const setPlayPause = () => actionable(() => {
         setPaused(p => !p)
-    }
+    })
 
-    const setPlayRate = () => {
-        if (!showControls) {
-            return
-        }
+    const setPlayRate = () => actionable(() => {
         setRate(RATE[(RATE.indexOf(rate) + 1) % RATE.length])
-    }
+    })
 
     return {
         seekPanResponder,
