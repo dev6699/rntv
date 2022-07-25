@@ -82,7 +82,7 @@ export const useVideoPlayer = () => {
     const videoPlayerRef = useRef<RNVideo>()
     const animationsRef = useRef({
         controlBar: {
-            marginBottom: new Animated.Value(0),
+            top: new Animated.Value(-100),
             opacity: new Animated.Value(1),
         },
         loader: {
@@ -182,8 +182,8 @@ export const useVideoPlayer = () => {
                 duration: CONFIG.CONTROL_ANIMATION_TIMING,
                 useNativeDriver: false,
             }),
-            Animated.timing(animations.controlBar.marginBottom, {
-                toValue: 0,
+            Animated.timing(animations.controlBar.top, {
+                toValue: -100,
                 duration: CONFIG.CONTROL_ANIMATION_TIMING,
                 useNativeDriver: false,
             }),
@@ -197,8 +197,8 @@ export const useVideoPlayer = () => {
                 duration: CONFIG.CONTROL_ANIMATION_TIMING,
                 useNativeDriver: false,
             }),
-            Animated.timing(animations.controlBar.marginBottom, {
-                toValue: -100,
+            Animated.timing(animations.controlBar.top, {
+                toValue: 0,
                 duration: CONFIG.CONTROL_ANIMATION_TIMING,
                 useNativeDriver: false,
             }),

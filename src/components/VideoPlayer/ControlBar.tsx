@@ -21,9 +21,8 @@ export const ControlBar: React.FC = () => {
   return (
     <Animated.View
       style={{
-        top: -100,
+        top: animationsRef.current.controlBar.top,
         opacity: animationsRef.current.controlBar.opacity,
-        marginBottom: animationsRef.current.controlBar.marginBottom,
         backgroundColor: 'rgba(0, 0, 0, 0.5)',
       }}>
       <ControlSeek />
