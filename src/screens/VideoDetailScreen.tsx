@@ -1,19 +1,32 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { FlatList, Image, Text, View } from 'react-native';
 
 import { Button } from '../components';
 import { useOrientation, useVideoContext } from '../hooks';
 import { imgAssets } from '../utils';
 
+type VideoWatch = {
+  href: string;
+  ep: string;
+  watched: boolean;
+};
+
 export const VideoDetailScreen: React.FC = () => {
   const {
     state: { videoDetail },
-    actions: { playVideo, saveFavourite, isFavourite, removeFavourite },
+    actions: {
+      getWatched,
+      playVideo,
+      saveFavourite,
+      isFavourite,
+      removeFavourite,
+    },
   } = useVideoContext();
 
   const { isPortrait, orientation } = useOrientation();
 
   const [source, setSource] = useState(Object.keys(videoDetail.source)[0]);
+  const [episodes, setEpisodes] = useState<VideoWatch[]>([]);
 
   const isFav = isFavourite(videoDetail);
 
@@ -24,6 +37,15 @@ export const VideoDetailScreen: React.FC = () => {
       await saveFavourite(videoDetail);
     }
   };
+
+  useEffect(() => {
+    (async () => {
+      const newEpisodes = videoDetail.source[source] as VideoWatch[];
+      const key = `${videoDetail.title}:${source}`;
+      await getWatched(key, newEpisodes);
+      setEpisodes(newEpisodes);
+    })();
+  }, [source]);
 
   return (
     <View
@@ -103,18 +125,21 @@ export const VideoDetailScreen: React.FC = () => {
           <FlatList
             key={'ep' + orientation}
             numColumns={isPortrait ? 3 : 4}
-            data={videoDetail.source[source]}
+            data={episodes}
             renderItem={({ item, index }) => {
+              const key = `${videoDetail.title}:${source}`;
+              const value = item.ep;
               return (
                 <View style={{ width: isPortrait ? '33%' : '25%' }}>
                   <Button
+                    textStyle={{ color: item.watched ? '#4287f5' : 'white' }}
                     style={{
                       alignItems: 'flex-start',
                       flex: 1,
                     }}
                     text={item.ep}
                     key={item.href + index}
-                    onPress={() => playVideo(item.href)}
+                    onPress={() => playVideo(item.href, { key, value })}
                   />
                 </View>
               );

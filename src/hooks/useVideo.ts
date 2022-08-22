@@ -85,7 +85,7 @@ export const useVideo = (nav: TNavContext) => {
         nav.setPage('list')
     }
 
-    const playVideo = async (pageUrl: string) => {
+    const playVideo = async (pageUrl: string, data: { key: string, value: string }) => {
         const url = await withErrBound(tvService.getVideoUrl(pageUrl),
             (res) => {
                 if (!res) {
@@ -97,8 +97,35 @@ export const useVideo = (nav: TNavContext) => {
             return
         }
 
+        await setWatched(data)
+
         setPlayVideoUrl(url);
         nav.setPage('play');
+    }
+
+    const setWatched = async (data: { key: string, value: string }) => {
+        const watchedStr = await AsyncStorage.getItem(data.key)
+        let watched: Set<string>
+        if (!watchedStr) {
+            watched = new Set()
+        } else {
+            watched = JSON.parse(watchedStr)
+            watched = new Set(watched)
+        }
+        watched.add(data.value)
+        await AsyncStorage.setItem(data.key, JSON.stringify([...watched]))
+    }
+
+    const getWatched = async (key: string, vids: { ep: string, watched: boolean }[]) => {
+        const watchedStr = await AsyncStorage.getItem(key)
+        if (!watchedStr) {
+            return false
+        }
+        let watched = JSON.parse(watchedStr) as Set<string>
+        watched = new Set(watched)
+        for (const e of vids) {
+            e.watched = watched.has(e.ep)
+        }
     }
 
     const showVideoDetail = async (v: TVideo) => {
@@ -154,7 +181,7 @@ export const useVideo = (nav: TNavContext) => {
         setFavouriteVideos(favVids)
     }
 
-    const isFavourite = (video: TVideo) => {
+    const isFavourite = (video: { href: string }) => {
         return !!favouriteVideos.find(v => v.href === video.href)
     }
 
@@ -175,6 +202,7 @@ export const useVideo = (nav: TNavContext) => {
         },
 
         actions: {
+            getWatched,
             setError,
             playVideo,
             searchVideo,
