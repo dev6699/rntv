@@ -82,7 +82,6 @@ export const useVideoPlayer = () => {
     const videoPlayerRef = useRef<RNVideo>()
     const animationsRef = useRef({
         controlBar: {
-            top: new Animated.Value(-100),
             opacity: new Animated.Value(1),
         },
         loader: {
@@ -176,33 +175,19 @@ export const useVideoPlayer = () => {
     };
 
     const showControlAnimation = () => {
-        Animated.parallel([
-            Animated.timing(animations.controlBar.opacity, {
-                toValue: 1,
-                duration: CONFIG.CONTROL_ANIMATION_TIMING,
-                useNativeDriver: false,
-            }),
-            Animated.timing(animations.controlBar.top, {
-                toValue: -100,
-                duration: CONFIG.CONTROL_ANIMATION_TIMING,
-                useNativeDriver: false,
-            }),
-        ]).start();
+        Animated.timing(animations.controlBar.opacity, {
+            toValue: 1,
+            duration: CONFIG.CONTROL_ANIMATION_TIMING,
+            useNativeDriver: false,
+        }).start()
     };
 
     const hideControlAnimation = () => {
-        Animated.parallel([
-            Animated.timing(animations.controlBar.opacity, {
-                toValue: 0,
-                duration: CONFIG.CONTROL_ANIMATION_TIMING,
-                useNativeDriver: false,
-            }),
-            Animated.timing(animations.controlBar.top, {
-                toValue: 0,
-                duration: CONFIG.CONTROL_ANIMATION_TIMING,
-                useNativeDriver: false,
-            }),
-        ]).start();
+        Animated.timing(animations.controlBar.opacity, {
+            toValue: 0,
+            duration: CONFIG.CONTROL_ANIMATION_TIMING,
+            useNativeDriver: false,
+        }).start()
     };
 
     const actionable = (func: (player: RNVideo) => void) => {

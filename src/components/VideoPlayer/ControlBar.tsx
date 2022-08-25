@@ -21,7 +21,10 @@ export const ControlBar: React.FC = () => {
   return (
     <Animated.View
       style={{
-        top: animationsRef.current.controlBar.top,
+        position: 'absolute',
+        bottom: 0,
+        left: 0,
+        right: 0,
         opacity: animationsRef.current.controlBar.opacity,
         backgroundColor: 'rgba(0, 0, 0, 0.5)',
       }}>

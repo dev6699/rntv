@@ -36,7 +36,7 @@ export const VideoList: React.FC<{
               <Text
                 numberOfLines={1}
                 style={{
-                  flex: 3,
+                  flex: 1,
                   fontSize: 20,
                   color: 'white',
                 }}>
@@ -47,7 +47,6 @@ export const VideoList: React.FC<{
                   onPress={() => onMorePress(href)}
                   text="更多"
                   style={{
-                    flex: 1,
                     paddingVertical: 0,
                     paddingHorizontal: 10,
                   }}
