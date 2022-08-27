@@ -2,7 +2,7 @@
 
 <p align="center">
     <picture >
-      <img alt="RNTV Logo" src="./docs/rntv-logo.png" style="max-width:180px;">
+      <img alt="RNTV Logo" src="./docs/rntv-logo.png" width="200">
     </picture>    
 </p>
 
@@ -57,7 +57,7 @@ yarn android
 
 - Sample source can be found at [/src/services/tv/sample.ts](/src/services/tv/sample.ts)
 
-1. Add your source satisfy the following types.
+1. Add your source satisfy the following [types](/src/services/tv/types.ts).
 
    ```typescript
    export type TVideoProvider = {
@@ -86,7 +86,7 @@ yarn android
 
 ## Release build
 
-Find output apk at [/android/app/build/outputs/apk/release/app-release.apk](/android/app/build/outputs/apk/release/app-release.apk)
+Find `app-release.apk` at [/android/app/build/outputs/apk/release](/android/app/build/outputs/apk/release)
 
 ```
 yarn build
