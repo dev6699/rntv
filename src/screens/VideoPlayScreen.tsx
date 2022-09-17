@@ -5,7 +5,10 @@ import { VideoPlayer } from '../components';
 import { useVideoContext } from '../hooks';
 
 export const VideoPlayScreen: React.FC = () => {
-  const { state } = useVideoContext();
+  const {
+    state: { playingVideo },
+    actions: { playNext, hasNext },
+  } = useVideoContext();
 
   return (
     <View
@@ -14,7 +17,15 @@ export const VideoPlayScreen: React.FC = () => {
         alignItems: 'flex-end',
         justifyContent: 'flex-end',
       }}>
-      <VideoPlayer uri={state.playVideoUrl} />
+      {playingVideo && (
+        <VideoPlayer
+          playNext={playNext}
+          hasNext={hasNext()}
+          key={playingVideo.url}
+          url={playingVideo.url}
+          title={playingVideo.title}
+        />
+      )}
     </View>
   );
 };
