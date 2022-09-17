@@ -24,7 +24,8 @@ export const useVideo = (nav: TNavContext) => {
     const [favouriteVideos, setFavouriteVideos] = useState<TVideo[]>([]);
 
     const [videoDetail, setVideoDetail] = useState<TVideoWithSource>({} as TVideoWithSource);
-    const [playVideoUrl, setPlayVideoUrl] = useState('');
+    const [playingVideo, setPlayingVideo] = useState<{ url: string, playTitle: string, title: string, index: number, source: string, sourceEps: { href: string, ep: string }[] }>();
+
 
     const tvService = TVService[provider]
 
@@ -85,22 +86,69 @@ export const useVideo = (nav: TNavContext) => {
         nav.setPage('list')
     }
 
-    const playVideo = async (pageUrl: string, data: { key: string, value: string }) => {
-        const url = await withErrBound(tvService.getVideoUrl(pageUrl),
+    const playVideo = async (
+        v: {
+            title: string,
+            source: string,
+            ep: string,
+            url: string,
+            eps: { href: string, ep: string }[],
+            index: number,
+        },
+        isNext?: boolean
+    ) => {
+        const { url, title, eps, index, source, ep } = v
+        const vidUrl = await withErrBound(tvService.getVideoUrl(url),
             (res) => {
                 if (!res) {
                     throw new Error('Something went wrong.')
                 }
             })
 
-        if (!url) {
+        if (!vidUrl) {
             return
         }
 
-        await setWatched(data)
+        await setWatched({
+            key: watchedKey(title, source),
+            value: ep
+        })
 
-        setPlayVideoUrl(url);
-        nav.setPage('play');
+        setPlayingVideo({
+            url: vidUrl,
+            playTitle: `${title} ${ep}`,
+            title,
+            index,
+            source,
+            sourceEps: eps
+        });
+        nav.setPage('play', isNext);
+    }
+
+    const playNext = () => {
+        if (!playingVideo) {
+            return
+        }
+        const nextIdx = playingVideo.index - 1
+        if (nextIdx < 0) {
+            return
+        }
+        const next = playingVideo.sourceEps[nextIdx]
+        playVideo({
+            index: nextIdx,
+            ep: next.ep,
+            url: next.href,
+            title: playingVideo.title,
+            source: playingVideo.source,
+            eps: playingVideo.sourceEps,
+        }, true)
+    }
+
+    const hasNext = () => {
+        if (!playingVideo) {
+            return false
+        }
+        return playingVideo.index - 1 >= 0
     }
 
     const setWatched = async (data: { key: string, value: string }) => {
@@ -119,13 +167,17 @@ export const useVideo = (nav: TNavContext) => {
     const getWatched = async (key: string, vids: { ep: string, watched: boolean }[]) => {
         const watchedStr = await AsyncStorage.getItem(key)
         if (!watchedStr) {
-            return false
+            return
         }
         let watched = JSON.parse(watchedStr) as Set<string>
         watched = new Set(watched)
         for (const e of vids) {
             e.watched = watched.has(e.ep)
         }
+    }
+
+    const watchedKey = (title: string, source: string) => {
+        return `${title}:${source}`
     }
 
     const showVideoDetail = async (v: TVideo) => {
@@ -195,20 +247,23 @@ export const useVideo = (nav: TNavContext) => {
             loading,
             provider,
             videoDetail,
-            playVideoUrl,
+            playingVideo,
             searchVideos,
             favouriteVideos,
             providers: Object.keys(TVService),
         },
 
         actions: {
+            watchedKey,
             getWatched,
             setError,
             playVideo,
+            playNext,
+            hasNext,
             searchVideo,
             setProvider,
             setVideoDetail,
-            setPlayVideoUrl,
+            setPlayingVideo,
             getVideoCategory,
             getVideoCategoryList,
             showVideoDetail,

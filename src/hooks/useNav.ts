@@ -14,8 +14,12 @@ export const useNav = () => {
 
     const history = useRef<TPage[]>(['home']).current
 
-    const setPage = (p: TPage) => {
-        history.push(p)
+    const setPage = (p: TPage, replace?: boolean) => {
+        if (replace) {
+            history[history.length - 1] = p
+        } else {
+            history.push(p)
+        }
         _setPage(p)
     }
 
@@ -55,6 +59,7 @@ export const useNav = () => {
 
     return {
         page,
-        setPage
+        setPage,
+        popPage
     }
 }
