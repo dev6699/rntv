@@ -8,7 +8,7 @@ export const ControlButton: React.FC<{ onPress?: () => void }> = ({
   return (
     <TouchableHighlight
       hasTVPreferredFocus={true}
-      underlayColor={'gray'}
+      underlayColor={'rgba(255, 255, 255, 0.4)'}
       onPress={onPress}
       style={{ padding: 16, borderRadius: 999 }}>
       {children}

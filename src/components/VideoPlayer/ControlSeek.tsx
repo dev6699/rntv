@@ -13,6 +13,7 @@ export const ControlSeek: React.FC = () => {
         marginLeft: 20,
         marginRight: 20,
         marginBottom: 10,
+        backgroundColor: 'transparent', // magic? otherwise cant drag on windows
       }}
       collapsable={false}>
       <View

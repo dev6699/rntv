@@ -23,7 +23,8 @@ const App = () => {
   return (
     <VideoContext.Provider value={videoState}>
       <NavContext.Provider value={navState}>
-        <SafeAreaView style={{ flex: 1, backgroundColor: 'black' }}>
+        <SafeAreaView
+          style={{ flex: 1, backgroundColor: 'black', paddingHorizontal: 10 }}>
           {error ? (
             <View
               style={{
@@ -35,6 +36,7 @@ const App = () => {
                 style={{
                   fontSize: 24,
                   fontWeight: 'bold',
+                  color: 'white',
                 }}>
                 {error}
               </Text>

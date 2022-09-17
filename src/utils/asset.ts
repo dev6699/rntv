@@ -6,6 +6,7 @@ export const imgAssets = {
     fforward: require('../../assets/img/fast-forward.png'),
     skipPrev: require('../../assets/img/skip-prev.png'),
     skipNext: require('../../assets/img/skip-next.png'),
-    loader: require('../../assets/img/loader-icon.png'),
     notFound: require('../../assets/img/not-found.png'),
+    back: require('../../assets/img/back.png'),
+    fullscreen: require('../../assets/img/fullscreen.png'),
 }

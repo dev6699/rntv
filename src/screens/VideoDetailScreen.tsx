@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { FlatList, Image, Text, View } from 'react-native';
 
-import { Button } from '../components';
+import { Button, BackButton } from '../components';
 import { useOrientation, useVideoContext } from '../hooks';
 import { imgAssets } from '../utils';
 
@@ -15,6 +15,7 @@ export const VideoDetailScreen: React.FC = () => {
   const {
     state: { videoDetail },
     actions: {
+      watchedKey,
       getWatched,
       playVideo,
       saveFavourite,
@@ -41,7 +42,7 @@ export const VideoDetailScreen: React.FC = () => {
   useEffect(() => {
     (async () => {
       const newEpisodes = videoDetail.source[source] as VideoWatch[];
-      const key = `${videoDetail.title}:${source}`;
+      const key = watchedKey(videoDetail.title, source);
       await getWatched(key, newEpisodes);
       setEpisodes(newEpisodes);
     })();
@@ -54,7 +55,17 @@ export const VideoDetailScreen: React.FC = () => {
         marginVertical: 2,
         flex: 1,
         flexDirection: isPortrait ? 'column-reverse' : 'row',
+        position: 'relative',
       }}>
+      <View
+        style={{
+          zIndex: 99,
+          position: isPortrait ? 'absolute' : 'relative',
+          top: 0,
+          left: 0,
+        }}>
+        <BackButton />
+      </View>
       <View style={{ flex: 5, flexDirection: isPortrait ? 'column' : 'row' }}>
         <FlatList
           horizontal={isPortrait}
@@ -127,8 +138,6 @@ export const VideoDetailScreen: React.FC = () => {
             numColumns={isPortrait ? 3 : 4}
             data={episodes}
             renderItem={({ item, index }) => {
-              const key = `${videoDetail.title}:${source}`;
-              const value = item.ep;
               return (
                 <View style={{ width: isPortrait ? '33%' : '25%' }}>
                   <Button
@@ -139,7 +148,16 @@ export const VideoDetailScreen: React.FC = () => {
                     }}
                     text={item.ep}
                     key={item.href + index}
-                    onPress={() => playVideo(item.href, { key, value })}
+                    onPress={() =>
+                      playVideo({
+                        index,
+                        ep: item.ep,
+                        url: item.href,
+                        title: videoDetail.title,
+                        source,
+                        eps: episodes,
+                      })
+                    }
                   />
                 </View>
               );
@@ -156,7 +174,7 @@ export const VideoDetailScreen: React.FC = () => {
           source={
             videoDetail.img ? { uri: videoDetail.img } : imgAssets.notFound
           }
-          resizeMode={'cover'}
+          resizeMode={'contain'}
           style={{
             flex: 1,
             width: '100%',

@@ -1,5 +1,11 @@
 import React, { useRef, useState } from "react";
-import { Animated, Easing, HWEvent, PanResponder, useTVEventHandler } from "react-native";
+import {
+    Animated, PanResponder, Platform,
+    useTVEventHandler as _useTVEventHandler, HWEvent,
+} from "react-native";
+
+// Fix windows issue
+const useTVEventHandler = _useTVEventHandler || function () { }
 
 export type TVideoPlayerContext = ReturnType<typeof useVideoPlayer>
 
@@ -19,6 +25,9 @@ type RNVideo = {
     seek(time: number): void
     dismissFullscreenPlayer(): void
     presentFullscreenPlayer(): void
+    _root: {
+        setNativeProps(props: { fullscreen: boolean, controls: boolean }): void
+    }
 }
 
 type RNVideoData = {
@@ -27,27 +36,33 @@ type RNVideoData = {
     playableDuration: number
 }
 
-
 export const useVideoPlayer = () => {
     const [error, setError] = useState(false);
-    const [loading, setLoading] = useState(false);
+    const [loading, setLoading] = useState(true);
     const [paused, setPaused] = useState(false);
     const [rate, setRate] = useState(1);
     const [duration, setDuration] = useState(0);
-    const [showControls, setShowControls] = useState(true);
+    const [controlsShown, setControlsShown] = useState(true);
     const [currentTime, setCurrentTime] = useState(0);
     const [playablePosition, setPlayablePosition] = useState(0)
     const [seekerPosition, setSeekerPosition] = useState(0)
     const [seeking, setSeeking] = useState(false)
 
+    const selectedTargetRef = useRef<number>()
+
     useTVEventHandler((e: HWEvent & { target?: number }) => {
-        if (e.eventType === 'up' && !showControls) {
+        const newTarget = e.target
+        if (e.eventType === 'up' && !controlsShown) {
+            // show controls when 'up' press and controls not shown
             showControl()
         }
 
-        if (e.eventType === 'down' && showControls) {
+        if (e.eventType === 'down' && controlsShown && selectedTargetRef.current === newTarget) {
+            // hide controls when 'down' press and controls showing and 
+            // down target is same as old target(at bottom)
             hideControls()
         }
+        selectedTargetRef.current = newTarget
     })
 
     const seekBarRef = useRef(0)
@@ -59,6 +74,7 @@ export const useVideoPlayer = () => {
             const position = e.nativeEvent.locationX;
             setSeekerPosition(position);
             setSeeking(true)
+            setLoading(true)
         },
         onPanResponderMove: (e) => {
             let position = e.nativeEvent.locationX;
@@ -84,46 +100,23 @@ export const useVideoPlayer = () => {
         controlBar: {
             opacity: new Animated.Value(1),
         },
-        loader: {
-            rotate: new Animated.Value(0),
-            MAX_VALUE: 360,
-        },
     })
 
     const animations = animationsRef.current
 
-    const loadAnimation = () => {
-        if (!loading) {
-            return;
+    const withData = (func: (data: RNVideoData) => void) => {
+        return (data = {} as (RNVideoData & { nativeEvent?: RNVideoData })) => {
+            // Fix data in nativeEvent on windows
+            func(data.nativeEvent || data)
         }
+    }
 
-        Animated.sequence([
-            Animated.timing(animations.loader.rotate, {
-                toValue: animations.loader.MAX_VALUE,
-                duration: 1500,
-                easing: Easing.linear,
-                useNativeDriver: false,
-            }),
-            Animated.timing(animations.loader.rotate, {
-                toValue: 0,
-                duration: 0,
-                easing: Easing.linear,
-                useNativeDriver: false,
-            }),
-        ]).start();
-    };
-
-    const onLoadStart = () => {
-        setLoading(true);
-        loadAnimation();
-    };
-
-    const onLoad = (data = {} as RNVideoData) => {
+    const onLoad = withData((data) => {
         setDuration(data.duration);
         setLoading(false);
-    };
+    });
 
-    const onProgress = (data = {} as RNVideoData) => {
+    const onProgress = withData((data) => {
         if (duration === 0) {
             return
         }
@@ -141,21 +134,21 @@ export const useVideoPlayer = () => {
         position = Math.min(position, seekBarRef.current)
 
         setPlayablePosition(position)
-    };
+    });
 
-    const onSeek = (data = {} as RNVideoData) => {
-        setCurrentTime(data.currentTime);
-    };
-
+    const onSeek = () => {
+        setLoading(false)
+    }
 
     const onError = (err: Error) => {
         console.log(err);
         setLoading(false);
         setError(true);
+        showControl()
     };
 
     const onScreenTouch = () => {
-        if (showControls) {
+        if (controlsShown) {
             hideControls()
         } else {
             showControl()
@@ -163,35 +156,36 @@ export const useVideoPlayer = () => {
     }
 
     const showControl = () => {
-        setShowControls(true)
-        showControlAnimation();
-        videoPlayerRef.current?.dismissFullscreenPlayer()
-    }
-
-    const hideControls = () => {
-        setShowControls(false);
-        hideControlAnimation();
-        videoPlayerRef.current?.presentFullscreenPlayer()
-    };
-
-    const showControlAnimation = () => {
+        setControlsShown(true)
         Animated.timing(animations.controlBar.opacity, {
             toValue: 1,
             duration: CONFIG.CONTROL_ANIMATION_TIMING,
             useNativeDriver: false,
         }).start()
-    };
 
-    const hideControlAnimation = () => {
+        if (Platform.OS !== 'windows') {
+            videoPlayerRef.current?.dismissFullscreenPlayer()
+        } else {
+            videoPlayerRef.current?._root.setNativeProps({ fullscreen: false, controls: false });
+        }
+    }
+
+    const hideControls = () => {
         Animated.timing(animations.controlBar.opacity, {
             toValue: 0,
             duration: CONFIG.CONTROL_ANIMATION_TIMING,
             useNativeDriver: false,
-        }).start()
+        }).start(() => {
+            setControlsShown(false)
+            if (Platform.OS !== 'windows') {
+                videoPlayerRef.current?.presentFullscreenPlayer()
+            }
+        })
     };
 
+
     const actionable = (func: (player: RNVideo) => void) => {
-        if (!showControls || !duration || !videoPlayerRef.current) {
+        if (!controlsShown || !duration || !videoPlayerRef.current) {
             return
         }
         func(videoPlayerRef.current)
@@ -215,6 +209,11 @@ export const useVideoPlayer = () => {
         player.seek(Math.min(((chunk + 1) * duration / CONFIG.MAX_VIDEO_CHUNK), duration))
     })
 
+    const fullscreen = () => actionable((player) => {
+        hideControls()
+        player.presentFullscreenPlayer()
+    })
+
     const setPlayPause = () => actionable(() => {
         setPaused(p => !p)
     })
@@ -233,6 +232,7 @@ export const useVideoPlayer = () => {
             loading,
             duration,
             currentTime,
+            controlsShown,
             seekerPosition,
             playablePosition
         },
@@ -248,8 +248,7 @@ export const useVideoPlayer = () => {
             onLoad,
             onError,
             onProgress,
-            onLoadStart,
-            onScreenTouch
+            onScreenTouch,
         },
 
         actions: {
@@ -257,6 +256,7 @@ export const useVideoPlayer = () => {
             fforward,
             skipNext,
             skipPrev,
+            fullscreen,
             setPlayRate,
             setPlayPause,
         }

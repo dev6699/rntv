@@ -16,7 +16,6 @@ export const Video: React.FC<{ uri: string }> = ({ uri }) => {
         resizeMode={'contain'}
         paused={state.paused}
         rate={state.rate}
-        onLoadStart={events.onLoadStart}
         onProgress={events.onProgress}
         onError={events.onError}
         onLoad={events.onLoad}

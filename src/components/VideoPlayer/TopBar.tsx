@@ -2,6 +2,7 @@ import React from 'react';
 import { Animated, Text } from 'react-native';
 
 import { useVideoPlayerContext } from './useVideoPlayer';
+import { BackButton } from '../BackButton';
 import { Button } from '../Button';
 
 export const TopBar: React.FC<{
@@ -27,6 +28,7 @@ export const TopBar: React.FC<{
         flexDirection: 'row',
         alignItems: 'center',
       }}>
+      <BackButton />
       <Text style={{ fontSize: 20, marginLeft: 10, color: 'white' }}>
         {title}
       </Text>

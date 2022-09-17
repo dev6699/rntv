@@ -1,6 +1,6 @@
 import React from 'react';
-import {Image, Text, View} from 'react-native';
-import {imgAssets} from '../../utils';
+import { Image, Text, View } from 'react-native';
+import { imgAssets } from '../../utils';
 
 export const Error: React.FC = () => {
   return (

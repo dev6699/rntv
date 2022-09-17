@@ -11,6 +11,7 @@ import { ControlFForward } from './ControlFForward';
 import { ControlPlayPause } from './ControlPlayPause';
 
 import { useVideoPlayerContext } from './useVideoPlayer';
+import { ControlFullscreen } from './ControlFullscreen';
 
 export const ControlBar: React.FC = () => {
   const {
@@ -25,6 +26,7 @@ export const ControlBar: React.FC = () => {
         bottom: 0,
         left: 0,
         right: 0,
+        zIndex: 99,
         opacity: animationsRef.current.controlBar.opacity,
         backgroundColor: 'rgba(0, 0, 0, 0.5)',
       }}>
@@ -58,6 +60,7 @@ export const ControlBar: React.FC = () => {
           <ControlPlayPause />
           <ControlFForward />
           <ControlSkipNext />
+          <ControlFullscreen />
         </View>
       </View>
     </Animated.View>
