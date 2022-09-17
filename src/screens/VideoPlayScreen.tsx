@@ -23,7 +23,7 @@ export const VideoPlayScreen: React.FC = () => {
           hasNext={hasNext()}
           key={playingVideo.url}
           url={playingVideo.url}
-          title={playingVideo.title}
+          title={playingVideo.playTitle}
         />
       )}
     </View>
