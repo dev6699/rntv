@@ -8,7 +8,7 @@
 
 ## What is RNTV?
 
-RNTV is a video streaming tv/mobile application. Stream video from your sources.
+RNTV is a video streaming tv/mobile/desktop application. Stream video from your sources.
 
 ## Table of Contents
 
@@ -23,16 +23,34 @@ RNTV is a video streaming tv/mobile application. Stream video from your sources.
 
 ## Screenshots
 
-<p align="center">
-    <img src="./docs/screenshot-1.png" width="45%"/>
-    <img src="./docs/screenshot-2.png" width="45%"/>
-    <img src="./docs/screenshot-3.png" width="45%"/>
-    <img src="./docs/screenshot-4.png" width="45%"/>
-</p>
+<table>
+  <tr>
+      <td>Android Phone</td>
+      <td>Android TV</td>
+      <td>Windows Desktop</td>
+  </tr>
+  <tr>
+    <td valign="top" width="30%"> 
+      <img src="./docs/screenshot-6.png" width="100%" height="100%">
+      <img src="./docs/screenshot-7.png" width="100%" height="100%">
+    </td>
+    <td valign="top" width="35%">
+      <img src="./docs/screenshot-1.png" width="100%" height="100%">
+       <img src="./docs/screenshot-2.png" width="100%" height="100%">
+        <img src="./docs/screenshot-3.png" width="100%" height="100%">
+         <img src="./docs/screenshot-4.png" width="100%" height="100%">
+    </td>
+    <td valign="top" width="35%">
+      <img src="./docs/screenshot-5.png" width="100%" height="100%">
+    </td>
+  </tr>
+ </table>
 
 ## Installation
 
 Make sure you have setup react native environment [here](https://reactnative.dev/docs/environment-setup)
+
+- [windows setup](https://microsoft.github.io/react-native-windows/docs/getting-started)
 
 Clone this repo
 
@@ -49,8 +67,16 @@ yarn
 
 ## Development
 
+For android
+
 ```
 yarn android
+```
+
+For windows
+
+```
+yarn windows
 ```
 
 ### Add your video sources
@@ -86,10 +112,16 @@ yarn android
 
 ## Release build
 
-Find `app-release.apk` at [/android/app/build/outputs/apk/release](/android/app/build/outputs/apk/release)
+For android, find `app-release.apk` at [/android/app/build/outputs/apk/release](/android/app/build/outputs/apk/release)
 
 ```
 yarn build
+```
+
+For windows
+
+```
+yarn build:win
 ```
 
 ## License
