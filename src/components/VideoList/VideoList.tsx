@@ -1,5 +1,6 @@
 import React from 'react';
 import { FlatList, Text, View } from 'react-native';
+import { useOrientation } from '../../hooks';
 
 import type { TVideo, TVideosRec } from '../../services';
 import { Button } from '../Button';
@@ -11,6 +12,8 @@ export const VideoList: React.FC<{
   onMorePress: (path: string) => void;
   ListHeaderComponent?: JSX.Element;
 }> = ({ videoGroup, ListHeaderComponent, onVideoPress, onMorePress }) => {
+  const { numCols } = useOrientation();
+
   return (
     <FlatList
       ListHeaderComponent={ListHeaderComponent}
@@ -54,11 +57,13 @@ export const VideoList: React.FC<{
               ) : null}
             </View>
             <FlatList
-              horizontal={true}
+              key={numCols}
               data={videos}
+              numColumns={numCols}
               renderItem={({ item, index }) => {
                 return (
                   <VideoCard
+                    style={{ flex: 1 / numCols }}
                     video={item}
                     key={item.title + index}
                     onVideoPress={() => onVideoPress(item)}

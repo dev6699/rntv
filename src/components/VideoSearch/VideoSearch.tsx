@@ -15,9 +15,8 @@ export const VideoSearch: React.FC<{
       style={{
         paddingHorizontal: 5,
         alignItems: 'center',
-        borderColor: 'white',
-        borderWidth: 1,
-        borderRadius: 10,
+        backgroundColor: 'rgba(255, 255, 255, 0.2)',
+        borderRadius: 5,
       }}>
       <TextInput
         ref={inputRef}
@@ -25,6 +24,7 @@ export const VideoSearch: React.FC<{
         style={{
           width: '100%',
           padding: 5,
+          paddingLeft: 10,
           color: 'white',
         }}
         value={value}

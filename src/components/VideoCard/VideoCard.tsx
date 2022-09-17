@@ -25,7 +25,6 @@ export const VideoCard: React.FC<{
 
   const animations = useRef({
     scale: new Animated.Value(1),
-    zIndex: new Animated.Value(0),
     opacity: new Animated.Value(0),
   }).current;
 
@@ -67,6 +66,7 @@ export const VideoCard: React.FC<{
       onBlur={unfocusCard}
       onPress={onVideoPress}
       style={{
+        marginBottom: 10,
         overflow: 'hidden',
         position: 'relative',
         borderRadius: 10,

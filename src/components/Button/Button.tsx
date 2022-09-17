@@ -12,8 +12,6 @@ export const Button: React.FC<{
       underlayColor={'rgba(255, 255, 255, 0.2)'}
       style={{
         padding: 5,
-        marginRight: 10,
-        marginVertical: 5,
         alignItems: 'center',
         justifyContent: 'center',
         ...style,

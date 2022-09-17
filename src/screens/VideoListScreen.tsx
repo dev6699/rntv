@@ -7,7 +7,7 @@ import { VideoCard } from '../components';
 export const VideoListScreen = () => {
   const { state, actions } = useVideoContext();
 
-  const { orientation, isPortrait } = useOrientation();
+  const { orientation, numCols } = useOrientation();
 
   const list = state.videosList[0];
 
@@ -17,14 +17,14 @@ export const VideoListScreen = () => {
 
   return (
     <FlatList
-      key={orientation}
-      numColumns={isPortrait ? 2 : 3}
+      key={orientation + numCols}
+      numColumns={numCols}
       data={list.videos}
       columnWrapperStyle={{ marginBottom: 20 }}
       renderItem={({ item, index }) => {
         return (
           <VideoCard
-            style={{ flex: isPortrait ? 0.5 : 1 }}
+            style={{ flex: 1 / numCols }}
             video={item}
             key={item.title + index}
             onVideoPress={() => actions.showVideoDetail(item)}
