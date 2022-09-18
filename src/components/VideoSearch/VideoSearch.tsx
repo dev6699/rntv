@@ -11,11 +11,11 @@ export const VideoSearch: React.FC<{
     <TouchableHighlight
       onPress={() => inputRef.current?.focus()}
       hasTVPreferredFocus={true}
-      underlayColor={'rgba(255, 255, 255, 0.2)'}
+      underlayColor={'#4287f5'}
       style={{
-        paddingHorizontal: 5,
+        padding: 0,
+        paddingBottom: 3,
         alignItems: 'center',
-        backgroundColor: 'rgba(255, 255, 255, 0.2)',
         borderRadius: 5,
       }}>
       <TextInput
@@ -26,6 +26,8 @@ export const VideoSearch: React.FC<{
           padding: 5,
           paddingLeft: 10,
           color: 'white',
+          borderRadius: 5,
+          backgroundColor: '#3b3e45',
         }}
         value={value}
         onChangeText={onChangeText}
