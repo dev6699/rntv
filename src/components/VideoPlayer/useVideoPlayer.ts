@@ -51,18 +51,28 @@ export const useVideoPlayer = () => {
     const selectedTargetRef = useRef<number>()
 
     useTVEventHandler((e: HWEvent & { target?: number }) => {
-        const newTarget = e.target
         if (e.eventType === 'up' && !controlsShown) {
             // show controls when 'up' press and controls not shown
+            if (!e.target) {
+                // e.target will be undefined when contorls refocus(shown on screen)
+                // state: hide -> show
+                selectedTargetRef.current = e.target
+            }
             showControl()
         }
 
-        if (e.eventType === 'down' && controlsShown && selectedTargetRef.current === newTarget) {
+
+        if (e.eventType === 'down' && controlsShown && (selectedTargetRef.current === e.target || !selectedTargetRef.current)) {
             // hide controls when 'down' press and controls showing and 
             // down target is same as old target(at bottom)
+            // or target is undefined(only refocus) without other key pressed (state: hide -> show -> hide)
             hideControls()
         }
-        selectedTargetRef.current = newTarget
+
+        if (e.eventType !== 'blur' && e.eventType !== 'focus' && e.target) {
+            // update last selected target
+            selectedTargetRef.current = e.target
+        }
     })
 
     const seekBarRef = useRef(0)
