@@ -29,14 +29,19 @@ export const TopBar: React.FC<{
         alignItems: 'center',
       }}>
       <BackButton />
-      <Text style={{ fontSize: 20, marginLeft: 10, color: 'white' }}>
+      <Text style={{ fontSize: 20, marginLeft: 10, color: 'white', flex: 1 }}>
         {title}
       </Text>
       {hasNext && (
         <Button
           onPress={playNext}
           text={'下集'}
-          style={{ marginLeft: 'auto', marginRight: 10, marginVertical: 0 }}
+          style={{
+            marginLeft: 'auto',
+            marginRight: 10,
+            marginVertical: 0,
+            alignSelf: 'flex-start',
+          }}
         />
       )}
     </Animated.View>
