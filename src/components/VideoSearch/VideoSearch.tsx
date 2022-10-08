@@ -1,5 +1,6 @@
 import React, { useRef, useState } from 'react';
 import { TextInput, TouchableHighlight } from 'react-native';
+import { i18n } from '../../../i18n';
 
 export const VideoSearch: React.FC<{
   searchVideo: (keyword: string) => void;
@@ -37,7 +38,7 @@ export const VideoSearch: React.FC<{
           }
           searchVideo(value);
         }}
-        placeholder={'搜索'}
+        placeholder={i18n.t('search')}
       />
     </TouchableHighlight>
   );

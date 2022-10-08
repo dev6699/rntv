@@ -4,6 +4,7 @@ import { Animated, Text } from 'react-native';
 import { useVideoPlayerContext } from './useVideoPlayer';
 import { BackButton } from '../BackButton';
 import { Button } from '../Button';
+import { i18n } from '../../../i18n';
 
 export const TopBar: React.FC<{
   title: string;
@@ -35,7 +36,7 @@ export const TopBar: React.FC<{
       {hasNext && (
         <Button
           onPress={playNext}
-          text={'下集'}
+          text={i18n.t('nextEp')}
           style={{
             marginLeft: 'auto',
             marginRight: 10,

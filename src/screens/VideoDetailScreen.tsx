@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { FlatList, Image, Text, View } from 'react-native';
+import { i18n } from '../../i18n';
 
 import { Button, BackButton } from '../components';
 import { useOrientation, useVideoContext } from '../hooks';
@@ -122,7 +123,7 @@ export const VideoDetailScreen: React.FC = () => {
             </Text>
             <Button
               onPress={onFavouritePress}
-              text={'加入最爱'}
+              text={i18n.t('addFav')}
               textStyle={{ color: 'white' }}
               style={{
                 flex: 1,

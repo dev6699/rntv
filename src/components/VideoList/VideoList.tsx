@@ -1,5 +1,6 @@
 import React from 'react';
 import { FlatList, Text, View } from 'react-native';
+import { i18n } from '../../../i18n';
 import { useOrientation } from '../../hooks';
 
 import type { TVideo, TVideosRec } from '../../services';
@@ -48,7 +49,7 @@ export const VideoList: React.FC<{
               {href ? (
                 <Button
                   onPress={() => onMorePress(href)}
-                  text="更多"
+                  text={i18n.t('more')}
                   style={{
                     paddingVertical: 0,
                     paddingHorizontal: 10,
