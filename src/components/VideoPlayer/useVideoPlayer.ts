@@ -48,6 +48,7 @@ export const useVideoPlayer = () => {
     const [seekerPosition, setSeekerPosition] = useState(0)
     const [seeking, setSeeking] = useState(false)
 
+    const currentTimeRef = useRef(currentTime)
     const selectedTargetRef = useRef<number>()
 
     useTVEventHandler((e: HWEvent & { target?: number }) => {
@@ -132,6 +133,7 @@ export const useVideoPlayer = () => {
         }
 
         setCurrentTime(data.currentTime);
+        currentTimeRef.current = data.currentTime
         let percent = data.currentTime / duration;
         let position = (seekBarRef.current * percent) || 0
         position = Math.min(position, seekBarRef.current)
@@ -202,21 +204,25 @@ export const useVideoPlayer = () => {
     }
 
     const rewind = () => actionable((player) => {
-        player.seek(Math.max(currentTime - CONFIG.ADJUST_SECOND, 0))
+        currentTimeRef.current = Math.max(currentTimeRef.current - CONFIG.ADJUST_SECOND, 0)
+        player.seek(currentTimeRef.current)
     })
 
     const fforward = () => actionable((player) => {
-        player.seek(Math.min(currentTime + CONFIG.ADJUST_SECOND, duration))
+        currentTimeRef.current = Math.min(currentTimeRef.current + CONFIG.ADJUST_SECOND, duration)
+        player.seek(currentTimeRef.current)
     })
 
     const skipPrev = () => actionable((player) => {
-        const chunk = Math.floor(currentTime / (duration / CONFIG.MAX_VIDEO_CHUNK))
-        player.seek(Math.max(((chunk - 1) * duration / CONFIG.MAX_VIDEO_CHUNK), 0))
+        const chunk = Math.floor(currentTimeRef.current / (duration / CONFIG.MAX_VIDEO_CHUNK))
+        currentTimeRef.current = Math.max(((chunk - 1) * duration / CONFIG.MAX_VIDEO_CHUNK), 0)
+        player.seek(currentTimeRef.current)
     })
 
     const skipNext = () => actionable((player) => {
-        const chunk = Math.floor(currentTime / (duration / CONFIG.MAX_VIDEO_CHUNK))
-        player.seek(Math.min(((chunk + 1) * duration / CONFIG.MAX_VIDEO_CHUNK), duration))
+        const chunk = Math.floor(currentTimeRef.current / (duration / CONFIG.MAX_VIDEO_CHUNK))
+        currentTimeRef.current = Math.min(((chunk + 1) * duration / CONFIG.MAX_VIDEO_CHUNK), duration)
+        player.seek(currentTimeRef.current)
     })
 
     const fullscreen = () => actionable((player) => {
