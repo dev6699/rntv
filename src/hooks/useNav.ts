@@ -2,6 +2,7 @@ import React, { useRef } from "react";
 import { useEffect, useState } from "react";
 import { Alert, BackHandler } from "react-native";
 
+import { i18n } from '../../i18n';
 
 export type TNavContext = ReturnType<typeof useNav>
 export const NavContext = React.createContext<TNavContext>({} as TNavContext);
@@ -34,13 +35,13 @@ export const useNav = () => {
             switch (page) {
 
                 case 'home':
-                    Alert.alert('Hold on!', 'Are you sure you want to go back?', [
+                    Alert.alert(i18n.t('exitTitle'), i18n.t('exitMsg'), [
                         {
-                            text: 'Cancel',
+                            text: i18n.t('cancel'),
                             onPress: () => null,
                             style: 'cancel',
                         },
-                        { text: 'YES', onPress: () => BackHandler.exitApp() },
+                        { text: i18n.t('ok'), onPress: () => BackHandler.exitApp() },
                     ]);
                     break;
                 default:

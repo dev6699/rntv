@@ -9,20 +9,32 @@ type Translation = {
     more: string
     nextEp: string
     addFav: string
+    ok: string
+    cancel: string
+    exitTitle: string
+    exitMsg: string
 }
 
 const en: Translation = {
     search: 'Search',
     more: 'More',
     nextEp: 'Next Ep',
-    addFav: 'Add Fav'
+    addFav: 'Add Fav',
+    ok: 'OK',
+    cancel: 'Cancel',
+    exitTitle: 'Hold on!',
+    exitMsg: 'Are you sure you want to go back?'
 };
 
 const zh: Translation = {
     search: '搜索',
     more: '更多',
     nextEp: '下集',
-    addFav: '加入最爱'
+    addFav: '加入最爱',
+    ok: '确定',
+    cancel: '取消',
+    exitTitle: '稍等!',
+    exitMsg: '是否退出程序?'
 };
 
 export const i18n = new I18n({
