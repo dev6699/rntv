@@ -1,4 +1,5 @@
-import React, { useRef, useState } from "react";
+import React, { useRef, useState, useEffect } from "react";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 import {
     Animated, PanResponder, Platform,
     useTVEventHandler as _useTVEventHandler, HWEvent,
@@ -18,8 +19,8 @@ const CONFIG = {
     ADJUST_SECOND: 10,
     CONTROL_ANIMATION_TIMING: 500,
     CONTROL_TIMEOUT_DELAY: 10000
-
 } as const
+const PLAY_RATE_KEY = 'play-rate'
 
 type RNVideo = {
     seek(time: number): void
@@ -50,6 +51,16 @@ export const useVideoPlayer = () => {
 
     const currentTimeRef = useRef(currentTime)
     const selectedTargetRef = useRef<number>()
+
+    useEffect(() => {
+        (async () => {
+            const rate = await AsyncStorage.getItem(PLAY_RATE_KEY)
+            if (!rate) {
+                return
+            }
+            setRate(+rate)
+        })()
+    }, [])
 
     useTVEventHandler((e: HWEvent & { target?: number }) => {
         if (e.eventType === 'up' && !controlsShown) {
@@ -235,7 +246,9 @@ export const useVideoPlayer = () => {
     })
 
     const setPlayRate = () => actionable(() => {
-        setRate(RATE[(RATE.indexOf(rate) + 1) % RATE.length])
+        const playRate = RATE[(RATE.indexOf(rate) + 1) % RATE.length]
+        setRate(playRate)
+        AsyncStorage.setItem(PLAY_RATE_KEY, `${playRate}`)
     })
 
     return {
