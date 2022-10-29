@@ -1,5 +1,6 @@
 import React from 'react';
 import { FlatList } from 'react-native';
+import { theme } from '../../utils';
 import { Button } from '../Button';
 
 export const VideoProvider: React.FC<{
@@ -26,7 +27,7 @@ export const VideoProvider: React.FC<{
               marginRight: 0,
             }}
             textStyle={{
-              color: active ? 'white' : 'gray',
+              color: active ? theme.whiteA() : theme.grayA(),
               padding: 0,
               fontWeight: 'bold',
             }}

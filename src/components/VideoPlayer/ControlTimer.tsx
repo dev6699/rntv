@@ -1,5 +1,6 @@
 import React from 'react';
 import { Text } from 'react-native';
+import { theme } from '../../utils';
 
 const padTime2 = (str: string) => {
   return str.length < 2 ? `0${str}` : str;
@@ -22,7 +23,7 @@ export const ControlTimer: React.FC<{ time: number }> = ({ time }) => {
   return (
     <Text
       style={{
-        color: 'white',
+        color: theme.whiteA(),
         fontSize: 12,
       }}>
       {formatTime(time)}

@@ -4,6 +4,7 @@ import { SafeAreaView, ActivityIndicator, View, Text } from 'react-native';
 
 import { useNav, NavContext, useVideo, VideoContext } from './src/hooks';
 import { Screen } from './src/screens';
+import { theme } from './src/utils';
 
 const App = () => {
   const navState = useNav();
@@ -24,19 +25,23 @@ const App = () => {
     <VideoContext.Provider value={videoState}>
       <NavContext.Provider value={navState}>
         <SafeAreaView
-          style={{ flex: 1, backgroundColor: 'black', paddingHorizontal: 10 }}>
+          style={{
+            flex: 1,
+            backgroundColor: theme.blackA(),
+            paddingHorizontal: 10,
+          }}>
           {error ? (
             <View
               style={{
                 padding: 10,
                 alignItems: 'center',
-                backgroundColor: 'red',
+                backgroundColor: theme.warn,
               }}>
               <Text
                 style={{
                   fontSize: 24,
                   fontWeight: 'bold',
-                  color: 'white',
+                  color: theme.whiteA(),
                 }}>
                 {error}
               </Text>
@@ -51,7 +56,7 @@ const App = () => {
                 alignItems: 'center',
                 justifyContent: 'center',
               }}>
-              <ActivityIndicator size={100} color="#4287f5" />
+              <ActivityIndicator size={100} color={theme.primary} />
             </View>
           )}
         </SafeAreaView>

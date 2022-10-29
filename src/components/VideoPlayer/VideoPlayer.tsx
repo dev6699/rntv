@@ -8,6 +8,7 @@ import { Error } from './Error';
 import { Loader } from './Loader';
 import { ControlBar } from './ControlBar';
 import { TopBar } from './TopBar';
+import { theme } from '../../utils';
 
 export const VideoPlayer: React.FC<{
   url: string;
@@ -24,7 +25,7 @@ export const VideoPlayer: React.FC<{
     <VideoPlayerContext.Provider value={videoPlayerState}>
       <View
         style={{
-          backgroundColor: '#000',
+          backgroundColor: theme.blackA(),
           flex: 1,
           alignSelf: 'stretch',
           justifyContent: 'space-between',

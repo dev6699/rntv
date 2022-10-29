@@ -1,5 +1,6 @@
 import React from 'react';
 import { View } from 'react-native';
+import { theme } from '../../utils';
 import { useVideoPlayerContext } from './useVideoPlayer';
 
 export const ControlSeek: React.FC = () => {
@@ -13,12 +14,12 @@ export const ControlSeek: React.FC = () => {
         marginLeft: 20,
         marginRight: 20,
         marginBottom: 10,
-        backgroundColor: 'transparent', // magic? otherwise cant drag on windows
+        backgroundColor: theme.transparent, // magic? otherwise cant drag on windows
       }}
       collapsable={false}>
       <View
         style={{
-          backgroundColor: '#FFF',
+          backgroundColor: theme.whiteA(),
           height: 1,
           position: 'relative',
           top: 14,
@@ -31,7 +32,7 @@ export const ControlSeek: React.FC = () => {
         <View
           style={{
             position: 'absolute',
-            backgroundColor: 'gray',
+            backgroundColor: theme.grayA(),
             height: 1,
             width: state.playablePosition,
           }}
@@ -39,7 +40,7 @@ export const ControlSeek: React.FC = () => {
         />
         <View
           style={{
-            backgroundColor: '#4287f5',
+            backgroundColor: theme.primary,
             height: 1,
             width: state.seekerPosition,
           }}
@@ -61,7 +62,7 @@ export const ControlSeek: React.FC = () => {
             borderRadius: 12,
             height: 12,
             width: 12,
-            backgroundColor: '#4287f5',
+            backgroundColor: theme.primary,
           }}
           pointerEvents={'none'}
         />

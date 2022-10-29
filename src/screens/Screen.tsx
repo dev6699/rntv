@@ -1,13 +1,14 @@
 import React from 'react';
 import { ActivityIndicator } from 'react-native';
 
+import { theme } from '../utils';
 import { useNavContext, useVideoContext } from '../hooks';
 
 import { HomeScreen } from './HomeScreen';
-import { VideoCategoryScreen } from './VideoCategoryScreen';
 import { VideoListScreen } from './VideoListScreen';
 import { VideoPlayScreen } from './VideoPlayScreen';
 import { VideoDetailScreen } from './VideoDetailScreen';
+import { VideoCategoryScreen } from './VideoCategoryScreen';
 
 export const Screen = () => {
   const { page } = useNavContext();
@@ -17,7 +18,7 @@ export const Screen = () => {
     <>
       {state.loading && (
         <ActivityIndicator
-          color={'#4287f5'}
+          color={theme.primary}
           size={48}
           style={{
             right: 20,

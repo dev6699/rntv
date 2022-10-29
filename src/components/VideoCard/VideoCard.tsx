@@ -10,7 +10,7 @@ import {
 import { useOrientation } from '../../hooks';
 import type { TVideo } from '../../services';
 
-import { imgAssets } from '../../utils';
+import { imgAssets, theme } from '../../utils';
 
 export const VideoCard: React.FC<{
   style?: ViewStyle;
@@ -85,7 +85,7 @@ export const VideoCard: React.FC<{
           style={{
             zIndex: 99,
             opacity: animations.opacity,
-            borderColor: 'white',
+            borderColor: theme.whiteA(),
             borderWidth: 2,
             borderRadius: 10,
             position: 'absolute',
@@ -121,13 +121,13 @@ export const VideoCard: React.FC<{
           {status !== '' && (
             <View
               style={{
-                backgroundColor: 'rgba(52, 52, 52, 0.85)',
+                backgroundColor: theme.blackA(0.7),
                 padding: 5,
                 position: 'absolute',
                 right: 0,
                 bottom: 0,
               }}>
-              <Text style={{ textAlign: 'right', color: 'white' }}>
+              <Text style={{ textAlign: 'right', color: theme.whiteA() }}>
                 {status}
               </Text>
             </View>
@@ -136,14 +136,14 @@ export const VideoCard: React.FC<{
 
         <View
           style={{
-            backgroundColor: 'black',
+            backgroundColor: theme.blackA(),
             flex: 1,
             alignItems: 'center',
           }}>
           <Text
             numberOfLines={1}
             style={{
-              color: 'white',
+              color: theme.whiteA(),
               fontSize: 16,
             }}>
             {title}

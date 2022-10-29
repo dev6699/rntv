@@ -1,12 +1,12 @@
 import React from 'react';
 import { Image, Text, View } from 'react-native';
-import { imgAssets } from '../../utils';
+import { imgAssets, theme } from '../../utils';
 
 export const Error: React.FC = () => {
   return (
     <View
       style={{
-        backgroundColor: 'rgba( 0, 0, 0, 0.5 )',
+        backgroundColor: theme.blackA(0.5),
         position: 'absolute',
         top: 0,
         right: 0,
@@ -23,8 +23,8 @@ export const Error: React.FC = () => {
       />
       <Text
         style={{
-          backgroundColor: 'transparent',
-          color: '#f27474',
+          backgroundColor: theme.transparent,
+          color: theme.warn,
         }}>
         Video unavailable
       </Text>

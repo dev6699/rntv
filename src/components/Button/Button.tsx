@@ -1,5 +1,6 @@
 import React from 'react';
 import { Text, TextStyle, TouchableHighlight, ViewStyle } from 'react-native';
+import { theme } from '../../utils';
 
 export const Button: React.FC<{
   text: string;
@@ -9,7 +10,7 @@ export const Button: React.FC<{
 }> = ({ onPress, text, style, textStyle }) => {
   return (
     <TouchableHighlight
-      underlayColor={'rgba(255, 255, 255, 0.2)'}
+      underlayColor={theme.whiteA(0.2)}
       style={{
         padding: 5,
         alignItems: 'center',
@@ -21,7 +22,7 @@ export const Button: React.FC<{
         style={{
           padding: 8,
           fontSize: 18,
-          color: 'white',
+          color: theme.whiteA(),
           ...textStyle,
         }}>
         {text}

@@ -4,7 +4,7 @@ import { i18n } from '../../i18n';
 
 import { Button, BackButton } from '../components';
 import { useOrientation, useVideoContext } from '../hooks';
-import { imgAssets } from '../utils';
+import { imgAssets, theme } from '../utils';
 
 type VideoWatch = {
   href: string;
@@ -83,13 +83,13 @@ export const VideoDetailScreen: React.FC = () => {
               <Button
                 text={s}
                 key={s + index}
-                style={{ backgroundColor: 'transparent' }}
+                style={{ backgroundColor: theme.transparent }}
                 textStyle={{
                   padding: 8,
                   fontSize: 18,
-                  color: 'white',
+                  color: theme.whiteA(),
                   borderBottomWidth: selected ? 3 : 0,
-                  borderColor: '#4287f5',
+                  borderColor: theme.primary,
                 }}
                 onPress={() => {
                   setSource(s);
@@ -102,7 +102,7 @@ export const VideoDetailScreen: React.FC = () => {
           style={{
             flex: isPortrait ? 5 : 3,
             borderWidth: 1,
-            borderColor: 'rgba(255, 255, 255, 0.2)',
+            borderColor: theme.whiteA(0.2),
           }}>
           <View
             style={{
@@ -110,27 +110,27 @@ export const VideoDetailScreen: React.FC = () => {
               flexDirection: 'row',
               alignItems: 'center',
               justifyContent: 'space-between',
-              backgroundColor: 'rgba(255, 255, 255, 0.15)',
+              backgroundColor: theme.whiteA(0.15),
             }}>
             <Text
               numberOfLines={1}
               style={{
                 flex: 3,
                 fontSize: 28,
-                color: 'white',
+                color: theme.whiteA(),
               }}>
               {videoDetail.title}
             </Text>
             <Button
               onPress={onFavouritePress}
               text={i18n.t('addFav')}
-              textStyle={{ color: 'white' }}
+              textStyle={{ color: theme.whiteA() }}
               style={{
                 flex: 1,
                 margin: 0,
                 padding: 0,
                 borderBottomWidth: 0,
-                backgroundColor: isFav ? '#4287f5' : 'transparent',
+                backgroundColor: isFav ? theme.primary : 'transparent',
               }}
             />
           </View>
@@ -142,7 +142,9 @@ export const VideoDetailScreen: React.FC = () => {
               return (
                 <View style={{ width: isPortrait ? '33%' : '25%' }}>
                   <Button
-                    textStyle={{ color: item.watched ? '#4287f5' : 'white' }}
+                    textStyle={{
+                      color: item.watched ? theme.primary : theme.whiteA(),
+                    }}
                     style={{
                       alignItems: 'flex-start',
                       flex: 1,

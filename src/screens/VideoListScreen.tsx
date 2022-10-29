@@ -3,6 +3,7 @@ import { FlatList, Text, View } from 'react-native';
 
 import { useOrientation, useVideoContext } from '../hooks';
 import { VideoCard, BackButton } from '../components';
+import { theme } from '../utils';
 
 export const VideoListScreen = () => {
   const { state, actions } = useVideoContext();
@@ -25,7 +26,9 @@ export const VideoListScreen = () => {
           marginBottom: 10,
         }}>
         <BackButton />
-        <Text style={{ fontSize: 20, color: 'white' }}>{list.title}</Text>
+        <Text style={{ fontSize: 20, color: theme.whiteA() }}>
+          {list.title}
+        </Text>
       </View>
       <FlatList
         key={orientation + numCols}

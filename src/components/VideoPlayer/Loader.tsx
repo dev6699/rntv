@@ -1,5 +1,6 @@
 import React from 'react';
 import { ActivityIndicator, View } from 'react-native';
+import { theme } from '../../utils';
 
 export const Loader: React.FC = () => {
   return (
@@ -13,7 +14,7 @@ export const Loader: React.FC = () => {
         alignItems: 'center',
         justifyContent: 'center',
       }}>
-      <ActivityIndicator size={30} color="#4287f5" />
+      <ActivityIndicator size={30} color={theme.primary} />
     </View>
   );
 };

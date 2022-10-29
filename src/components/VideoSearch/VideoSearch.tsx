@@ -1,6 +1,7 @@
 import React, { useRef, useState } from 'react';
 import { TextInput, TouchableHighlight } from 'react-native';
 import { i18n } from '../../../i18n';
+import { theme } from '../../utils';
 
 export const VideoSearch: React.FC<{
   searchVideo: (keyword: string) => void;
@@ -12,7 +13,7 @@ export const VideoSearch: React.FC<{
     <TouchableHighlight
       onPress={() => inputRef.current?.focus()}
       hasTVPreferredFocus={true}
-      underlayColor={'#4287f5'}
+      underlayColor={theme.primary}
       style={{
         padding: 0,
         paddingBottom: 3,
@@ -21,14 +22,14 @@ export const VideoSearch: React.FC<{
       }}>
       <TextInput
         ref={inputRef}
-        placeholderTextColor={'white'}
+        placeholderTextColor={theme.whiteA()}
         style={{
           width: '100%',
           padding: 5,
           paddingLeft: 10,
-          color: 'white',
+          color: theme.whiteA(),
           borderRadius: 5,
-          backgroundColor: '#3b3e45',
+          backgroundColor: theme.grayA(0.4),
         }}
         value={value}
         onChangeText={onChangeText}

@@ -12,6 +12,7 @@ import { ControlPlayPause } from './ControlPlayPause';
 
 import { useVideoPlayerContext } from './useVideoPlayer';
 import { ControlFullscreen } from './ControlFullscreen';
+import { theme } from '../../utils';
 
 export const ControlBar: React.FC = () => {
   const {
@@ -28,7 +29,7 @@ export const ControlBar: React.FC = () => {
         right: 0,
         zIndex: 99,
         opacity: animationsRef.current.controlBar.opacity,
-        backgroundColor: 'rgba(0, 0, 0, 0.5)',
+        backgroundColor: theme.blackA(0.5),
       }}>
       <ControlSeek />
       <View

@@ -4,6 +4,7 @@ import { i18n } from '../../../i18n';
 import { useOrientation } from '../../hooks';
 
 import type { TVideo, TVideosRec } from '../../services';
+import { theme } from '../../utils';
 import { Button } from '../Button';
 import { VideoCard } from '../VideoCard';
 
@@ -42,7 +43,7 @@ export const VideoList: React.FC<{
                 style={{
                   flex: 1,
                   fontSize: 20,
-                  color: 'white',
+                  color: theme.whiteA(),
                 }}>
                 {title}
               </Text>
