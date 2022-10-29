@@ -6,8 +6,10 @@ const locale = NativeModules.I18nManager.localeIdentifier.split('_')[0]
 
 type Translation = {
     search: string
+    searchResult: string
     more: string
     nextEp: string
+    fav: string
     addFav: string
     ok: string
     cancel: string
@@ -17,8 +19,10 @@ type Translation = {
 
 const en: Translation = {
     search: 'Search',
+    searchResult: 'Search Result',
     more: 'More',
     nextEp: 'Next Ep',
+    fav: 'Fav',
     addFav: 'Add Fav',
     ok: 'OK',
     cancel: 'Cancel',
@@ -28,8 +32,10 @@ const en: Translation = {
 
 const zh: Translation = {
     search: '搜索',
+    searchResult: '搜索结果',
     more: '更多',
     nextEp: '下集',
+    fav: '最爱',
     addFav: '加入最爱',
     ok: '确定',
     cancel: '取消',

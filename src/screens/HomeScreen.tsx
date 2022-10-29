@@ -1,14 +1,23 @@
 import React from 'react';
 import { View } from 'react-native';
 
+import { i18n } from '../../i18n';
 import { useVideoContext } from '../hooks';
 import { VideoList, VideoProvider, VideoSearch } from '../components';
 
 export const HomeScreen = () => {
   const { state, actions } = useVideoContext();
 
-  const search = { title: '搜索结果', href: '', videos: state.searchVideos };
-  const favourite = { title: '最爱', href: '', videos: state.favouriteVideos };
+  const search = {
+    title: i18n.t('searchResult'),
+    href: '',
+    videos: state.searchVideos,
+  };
+  const favourite = {
+    title: i18n.t('fav'),
+    href: '',
+    videos: state.favouriteVideos,
+  };
   const videos = [search, favourite, ...state.videos];
 
   return (
