@@ -207,13 +207,21 @@ export const useVideo = (nav: TNavContext) => {
             return
         }
 
-        const favVids = JSON.parse(favouriteVideosStr) as TVideo[]
-        setFavouriteVideos(favVids)
+        const favVids = JSON.parse(favouriteVideosStr) as (TVideo & { invalid: boolean })[]
 
-        const promises = favVids.map(tvService.updateVideoStatus)
+        setFavouriteVideos(favVids)
+        const promises = favVids.map(async (v) => {
+            try {
+                await tvService.updateVideoStatus(v)
+            } catch (err) {
+                v.invalid = true
+            }
+            return true
+        })
         Promise.all(promises).then(async () => {
-            await AsyncStorage.setItem(provider, JSON.stringify(favVids))
-            setFavouriteVideos(favVids)
+            const updatedFavVids = favVids.filter(v => !v.invalid)
+            await AsyncStorage.setItem(provider, JSON.stringify(updatedFavVids))
+            setFavouriteVideos(updatedFavVids)
         })
     }
 
