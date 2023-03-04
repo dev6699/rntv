@@ -10,7 +10,7 @@ export const useOrientation = () => {
     const isLandscape = orientation === 'LANDSCAPE'
     const isPortrait = !isLandscape
 
-    const numCols = Math.floor(width / 168);
+    const numCols = Math.max(Math.floor(width / 168), 2)
 
     return { height, width, orientation, isLandscape, isPortrait, numCols }
 }
