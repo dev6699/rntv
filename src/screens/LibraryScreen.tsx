@@ -68,65 +68,110 @@ export const LibraryScreen = () => {
                 alignItems: 'flex-end',
                 paddingBottom: 10,
                 borderBottomWidth: 1,
-                borderBottomColor: theme.whiteA(0.2)
+                borderBottomColor: theme.whiteA(0.2),
             }}>
                 {editMode ?
-                    <TouchableHighlight
-                        onPress={() => {
-                            if (allSelected) {
-                                setSelectedDelete({})
-                            } else {
-                                setSelectedDelete(JSON.parse(JSON.stringify(downloadList)))
-                            }
-                        }}
-                    >
-                        <View style={{ flexDirection: 'row', alignItems: 'center' }}>
-                            <View style={{ alignItems: 'center', marginRight: 10 }}>
+                    <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', flex: 1 }}>
 
-                                {allSelected ?
-                                    <Image
-                                        style={{
-                                            height: 24, width: 24,
-                                        }}
-                                        resizeMode='contain'
-                                        source={imgAssets.checked}
-                                    />
-                                    :
-                                    <View
-                                        style={{
-                                            height: 24, width: 24,
-                                            borderWidth: 1,
-                                            borderColor: theme.whiteA(0.3),
-                                            borderRadius: 999
-                                        }}
-                                    />
+                        <TouchableHighlight
+                            onPress={() => {
+                                if (allSelected) {
+                                    setSelectedDelete({})
+                                } else {
+                                    setSelectedDelete(JSON.parse(JSON.stringify(downloadList)))
                                 }
-                                <Text style={{
-                                    color: theme.whiteA(), fontSize: 10,
-                                }}>
-                                    All
+                            }}
+                        >
+                            <View style={{ flexDirection: 'row', alignItems: 'center' }}>
+                                <View style={{ alignItems: 'center', marginRight: 10 }}>
+
+                                    {allSelected ?
+                                        <Image
+                                            style={{
+                                                height: 24, width: 24,
+                                            }}
+                                            resizeMode='contain'
+                                            source={imgAssets.checked}
+                                        />
+                                        :
+                                        <View
+                                            style={{
+                                                height: 24, width: 24,
+                                                borderWidth: 1,
+                                                borderColor: theme.whiteA(0.3),
+                                                borderRadius: 999
+                                            }}
+                                        />
+                                    }
+                                    <Text style={{
+                                        color: theme.whiteA(), fontSize: 10,
+                                    }}>
+                                        All
+                                    </Text>
+                                </View>
+                                <Text style={{ color: theme.whiteA(), fontSize: 16 }}>
+                                    {
+                                        selectedCount > 0 ?
+                                            selectedCount + ' selected'
+                                            :
+                                            'Select items'
+                                    }
                                 </Text>
                             </View>
-                            <Text style={{ color: theme.whiteA(), fontSize: 16 }}>
-                                {
-                                    selectedCount > 0 ?
-                                        selectedCount + ' selected'
-                                        :
-                                        'Select items'
-                                }
-                            </Text>
-                        </View>
-                    </TouchableHighlight>
-                    :
-                    <View style={{ paddingVertical: 5, }}>
-                        <Text style={{ color: theme.whiteA(), fontSize: 20 }}>
-                            Downloads
-                        </Text>
-                        <View style={{ flexDirection: 'row', marginTop: 10 }}>
-                            <View style={{
-                                flexDirection: 'row',
-                                alignItems: 'center'
+                        </TouchableHighlight>
+                        <TouchableHighlight
+                            style={{ marginBottom: 5 }}
+                            onPress={() => {
+                                setEditMode(false)
+                                setSelectedDelete({})
                             }}
+                        >
+                            <Image
+                                style={{ height: 24, width: 24 }}
+                                resizeMode='contain'
+                                source={imgAssets.close}
+                            />
+                        </TouchableHighlight>
+                    </View>
+                    :
+                    <View style={{ padding: 5, flex: 1, }}>
+                        <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
+                            <Text style={{ color: theme.whiteA(), fontSize: 20 }}>
+                                Downloads
+                            </Text>
+
+                            {
+                                downloadCount > 0 &&
+                                <TouchableHighlight
+                                    style={{ marginBottom: 5 }}
+                                    onPress={() => {
+                                        setEditMode(true)
+                                    }}
+                                >
+                                    <Image
+                                        style={{ height: 24, width: 24 }}
+                                        resizeMode='contain'
+                                        source={imgAssets.edit}
+                                    />
+                                </TouchableHighlight>
+                            }
+                        </View>
+
+                        <View style={{
+                            marginTop: 10,
+                            borderWidth: 1,
+                            borderColor: theme.whiteA(0.7),
+                            padding: 10,
+                            width: '70%',
+                            marginLeft: 'auto',
+                            marginRight: 'auto',
+                        }}>
+                            <View
+                                style={{
+                                    flexDirection: 'row',
+                                    alignItems: 'center',
+                                    justifyContent: 'space-between'
+                                }}
                             >
                                 <Text style={{ color: theme.whiteA(0.7) }}>
                                     Wi-Fi Only
@@ -138,14 +183,13 @@ export const LibraryScreen = () => {
                                     value={wifiOnly}
                                 />
                             </View>
-                            <View style={{
-                                marginLeft: 10,
-                                paddingLeft: 10,
-                                borderLeftWidth: 1,
-                                borderLeftColor: theme.whiteA(0.7),
-                                flexDirection: 'row',
-                                alignItems: 'center'
-                            }}
+                            <View
+                                style={{
+                                    marginTop: 10,
+                                    flexDirection: 'row',
+                                    alignItems: 'center',
+                                    justifyContent: 'space-between',
+                                }}
                             >
                                 <Text style={{ color: theme.whiteA(0.7) }}>
                                     Auto Download
@@ -159,23 +203,6 @@ export const LibraryScreen = () => {
                             </View>
                         </View>
                     </View>
-                }
-
-                {
-                    downloadCount > 0 &&
-                    <TouchableHighlight
-                        style={{ marginBottom: 5 }}
-                        onPress={() => {
-                            setEditMode(m => !m)
-                            setSelectedDelete({})
-                        }}
-                    >
-                        <Image
-                            style={{ height: 24, width: 24 }}
-                            resizeMode='contain'
-                            source={editMode ? imgAssets.close : imgAssets.edit}
-                        />
-                    </TouchableHighlight>
                 }
             </View>
 
