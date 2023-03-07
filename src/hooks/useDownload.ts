@@ -26,6 +26,7 @@ const FS = RNFetchBlob.fs
 const DOWNLOAD_DIR = FS.dirs.DownloadDir
 const VIDEO_EXT = '.ts'
 const PNG_EXT = '.png'
+const BMP_EXT = '.bmp'
 
 enum DownloadListActionType {
     NEW,
@@ -156,7 +157,9 @@ export const useDownload = (props: { getVideoUrl: (url: string, provider: string
                 line.endsWith(VIDEO_EXT) ||
                 line.includes(VIDEO_EXT + "?") ||
                 line.endsWith(PNG_EXT) ||
-                line.includes(PNG_EXT + "?")
+                line.includes(PNG_EXT + "?") ||
+                line.endsWith(BMP_EXT) ||
+                line.includes(BMP_EXT + "?")
             ) {
                 if (line.startsWith('http://') || line.startsWith('https://')) {
                     files.push(line)
