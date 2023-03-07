@@ -16,7 +16,6 @@ export const VideoSearch: React.FC<{
       underlayColor={theme.primary}
       style={{
         padding: 0,
-        paddingBottom: 3,
         alignItems: 'center',
         borderRadius: 5,
       }}>

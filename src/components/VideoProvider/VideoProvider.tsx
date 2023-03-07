@@ -20,16 +20,20 @@ export const VideoProvider: React.FC<{
             key={item + index}
             text={item}
             onPress={() => setProvider(item)}
+            touchStyle={{
+              borderRadius: 12,
+              marginRight: 10
+            }}
             style={{
               paddingVertical: 10,
               paddingHorizontal: 15,
-              marginVertical: 0,
-              marginRight: 0,
+              borderRadius: 12,
+              backgroundColor: active ? theme.whiteA() : theme.grayA(0.4),
             }}
             textStyle={{
-              color: active ? theme.whiteA() : theme.grayA(),
+              fontSize: 14,
+              color: active ? theme.blackA() : theme.whiteA(),
               padding: 0,
-              fontWeight: 'bold',
             }}
           />
         );
