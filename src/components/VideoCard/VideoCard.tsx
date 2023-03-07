@@ -69,7 +69,6 @@ export const VideoCard: React.FC<{
         marginBottom: 10,
         overflow: 'hidden',
         position: 'relative',
-        borderRadius: 10,
         flex: 1,
         width: cardWidth,
         height: cardHeight,
@@ -87,7 +86,6 @@ export const VideoCard: React.FC<{
             opacity: animations.opacity,
             borderColor: theme.whiteA(),
             borderWidth: 2,
-            borderRadius: 10,
             position: 'absolute',
             top: 0,
             bottom: 0,
@@ -97,7 +95,6 @@ export const VideoCard: React.FC<{
         <View
           style={{
             flex: 5,
-            borderRadius: 10,
           }}>
           <Animated.View
             style={{
@@ -112,7 +109,6 @@ export const VideoCard: React.FC<{
               resizeMode={'cover'}
               source={img ? { uri: img } : imgAssets.notFound}
               style={{
-                borderRadius: 10,
                 height: '100%',
                 width: '100%',
               }}
