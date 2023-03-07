@@ -21,17 +21,15 @@ export const HomeScreen = () => {
   const videos = [search, favourite, ...state.videos];
 
   return (
-    <View style={{ padding: 5 }}>
+    <View style={{ flex: 1 }}>
       <VideoList
         ListHeaderComponent={
           <View
             style={{
-              marginTop: 3,
-              marginBottom: 15,
+              marginVertical: 10,
             }}>
             <View
               style={{
-                borderRadius: 20,
                 display: 'flex',
                 flexDirection: 'row',
                 alignItems: 'center',

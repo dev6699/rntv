@@ -86,6 +86,22 @@ export const useVideo = (nav: TNavContext) => {
         nav.setPage('list')
     }
 
+    const getVideoUrl = (url: string, prov = provider) => {
+        return TVService[prov].getVideoUrl(url)
+    }
+
+    const playOfflineVideo = (path: string, title: string) => {
+        setPlayingVideo({
+            url: `file://${path}`,
+            playTitle: title,
+            title,
+            index: 0,
+            source: '',
+            sourceEps: []
+        });
+        nav.setPage('play');
+    }
+
     const playVideo = async (
         v: {
             title: string,
@@ -265,6 +281,8 @@ export const useVideo = (nav: TNavContext) => {
             watchedKey,
             getWatched,
             setError,
+            getVideoUrl,
+            playOfflineVideo,
             playVideo,
             playNext,
             hasNext,

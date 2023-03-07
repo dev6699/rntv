@@ -8,7 +8,7 @@ export type TNavContext = ReturnType<typeof useNav>
 export const NavContext = React.createContext<TNavContext>({} as TNavContext);
 export const useNavContext = () => React.useContext(NavContext);
 
-type TPage = 'home' | 'category' | 'list' | 'detail' | 'play'
+type TPage = 'home' | 'library' | 'category' | 'list' | 'detail' | 'play'
 
 export const useNav = () => {
     const [page, _setPage] = useState<TPage>('home');

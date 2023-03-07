@@ -1,7 +1,8 @@
 import React from 'react';
-import { ActivityIndicator } from 'react-native';
+import { ActivityIndicator, Image, Platform, View } from 'react-native';
 
-import { theme } from '../utils';
+import { Button } from '../components';
+import { imgAssets, theme } from '../utils';
 import { useNavContext, useVideoContext } from '../hooks';
 
 import { HomeScreen } from './HomeScreen';
@@ -9,9 +10,10 @@ import { VideoListScreen } from './VideoListScreen';
 import { VideoPlayScreen } from './VideoPlayScreen';
 import { VideoDetailScreen } from './VideoDetailScreen';
 import { VideoCategoryScreen } from './VideoCategoryScreen';
+import { LibraryScreen } from './LibraryScreen';
 
 export const Screen = () => {
-  const { page } = useNavContext();
+  const { page, setPage } = useNavContext();
   const { state } = useVideoContext();
 
   return (
@@ -29,8 +31,55 @@ export const Screen = () => {
           }}
         />
       )}
-      {page === 'home' ? (
-        <HomeScreen />
+      {page === 'home' || page === 'library' ? (
+        <>
+          {page === 'home' ? <HomeScreen /> : <LibraryScreen />}
+          {!Platform.isTV &&
+            <View
+              style={{
+                flexDirection: 'row',
+                alignItems: 'center',
+                borderTopColor: theme.whiteA(0.2),
+                borderTopWidth: 1,
+                marginTop: 'auto'
+              }}>
+
+              <Button
+                touchStyle={{ flex: 1 }}
+                style={{
+                  flexDirection: 'column',
+                  flex: 0,
+                }}
+                textStyle={{
+                  padding: 0
+                }}
+                onPress={() => setPage('home')}
+                icon={<Image
+                  style={{ height: 24 }}
+                  resizeMode='contain'
+                  source={page === 'home' ? imgAssets.homeFill : imgAssets.homeLine} />}
+                text='Home'
+              />
+
+              <Button
+                touchStyle={{ flex: 1 }}
+                style={{
+                  flexDirection: 'column',
+                  flex: 0,
+                }}
+                textStyle={{
+                  padding: 0
+                }}
+                onPress={() => setPage('library')}
+                icon={<Image
+                  style={{ height: 24 }}
+                  resizeMode='contain'
+                  source={page === 'library' ? imgAssets.libraryFill : imgAssets.libraryLine} />}
+                text='Library'
+              />
+            </View>
+          }
+        </>
       ) : page === 'category' ? (
         <VideoCategoryScreen />
       ) : page === 'list' ? (
