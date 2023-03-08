@@ -1,16 +1,31 @@
 import React from 'react';
+import { Text, View } from 'react-native';
 
+import { theme } from '../utils';
 import { useVideoContext } from '../hooks';
-import { VideoList } from '../components';
+import { BackButton, VideoList } from '../components';
 
 export const VideoCategoryScreen = () => {
   const { state, actions } = useVideoContext();
-
   return (
-    <VideoList
-      onMorePress={actions.getVideoCategoryList}
-      onVideoPress={actions.showVideoDetail}
-      videoGroup={state.videosCategory}
-    />
+    <View style={{ display: 'flex', flex: 1 }}>
+      <View
+        style={{
+          display: 'flex',
+          flexDirection: 'row',
+          alignItems: 'center',
+          marginBottom: 10,
+        }}>
+        <BackButton />
+        <Text style={{ fontSize: 20, color: theme.whiteA() }}>
+          {state.category}
+        </Text>
+      </View>
+      <VideoList
+        onMorePress={actions.getVideoCategoryList}
+        onVideoPress={actions.showVideoDetail}
+        videoGroup={state.videosCategory}
+      />
+    </View>
   );
 };

@@ -11,7 +11,7 @@ import { VideoCard } from '../VideoCard';
 export const VideoList: React.FC<{
   videoGroup: TVideosRec[];
   onVideoPress: (v: TVideo) => void;
-  onMorePress: (path: string) => void;
+  onMorePress: (path: string, name: string) => void;
   ListHeaderComponent?: JSX.Element;
 }> = ({ videoGroup, ListHeaderComponent, onVideoPress, onMorePress }) => {
   const { numCols } = useOrientation();
@@ -49,7 +49,7 @@ export const VideoList: React.FC<{
               </Text>
               {href ? (
                 <Button
-                  onPress={() => onMorePress(href)}
+                  onPress={() => onMorePress(href, title)}
                   text={i18n.t('more')}
                   style={{
                     paddingVertical: 0,

@@ -16,6 +16,7 @@ export const useVideo = (nav: TNavContext) => {
 
     const [provider, setProvider] = useState<string>(Object.keys(TVService)[0])
 
+    const [category, setCategory] = useState('');
     const [videos, setVideos] = useState<TVideosRec[]>([]);
     const [videosCategory, setVideosCategory] = useState<TVideosRec[]>([]);
     const [videosList, setVideosList] = useState<TVideosRec[]>([]);
@@ -65,7 +66,7 @@ export const useVideo = (nav: TNavContext) => {
         }
     }
 
-    const getVideoCategory = async (path: string) => {
+    const getVideoCategory = async (path: string, category: string) => {
         const videos = await withErrBound(tvService.getVideoCategory(path))
         if (!videos) {
             return
@@ -75,6 +76,7 @@ export const useVideo = (nav: TNavContext) => {
             setVideosList(videos)
             nav.setPage('list')
         } else {
+            setCategory(category)
             setVideosCategory(videos)
             nav.setPage('category')
         }
@@ -266,6 +268,7 @@ export const useVideo = (nav: TNavContext) => {
             init,
             error,
             videos,
+            category,
             videosCategory,
             videosList,
             loading,
