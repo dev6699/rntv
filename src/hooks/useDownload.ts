@@ -87,12 +87,16 @@ export const useDownload = (props: { getVideoUrl: (url: string, provider: string
     const [autoDownload, setAutoDownload] = useState(false)
     const [downloading, setDownloading] = useState('')
     const [progress, setProgress] = useState('')
+    const [storage, setStorage] = useState('')
+
     const tasksRef = useRef<(StatefulPromise<FetchBlobResponse> | null)[]>([])
     const pauseCh = useRef<((_: unknown) => void) | null>(null)
     const mountedRef = useRef(false)
 
     useEffect(() => {
         (async () => {
+            await updateStorage()
+
             const wifiStr = await AsyncStorage.getItem(WIFI_KEY)
             if (wifiStr === 'false') {
                 setWifiOnly(false)
@@ -132,6 +136,26 @@ export const useDownload = (props: { getVideoUrl: (url: string, provider: string
             }
         })()
     }, [downloadList, autoDownload])
+
+    const updateStorage = async () => {
+        const groupStats = await FS.lstat(DOWNLOAD_DIR)
+        let size = 0
+        for (const stats of groupStats) {
+            const stat = await FS.lstat(stats.path)
+            for (const s of stat) {
+                size += +s.size
+            }
+        }
+
+        let unit = 'MB'
+        size /= (1024 * 1024)
+        if (size > 1000) {
+            size /= 1024
+            unit = 'GB'
+        }
+
+        setStorage(`${size.toFixed(2)} ${unit}`)
+    }
 
     const loadVideoChunks = async (url: string): Promise<string[]> => {
         const res = await axios.get(url)
@@ -323,6 +347,7 @@ export const useDownload = (props: { getVideoUrl: (url: string, provider: string
 
             const path = await mergeFiles(d.name, videoName, files)
             d.path = path
+            await updateStorage()
             setDownloading('')
             dispatch({ type: DownloadListActionType.COMPLETE, payload: { href: d.href, path: d.path! } })
             releasePause()
@@ -425,7 +450,18 @@ export const useDownload = (props: { getVideoUrl: (url: string, provider: string
                 console.error('error remove files:', err)
             }
         }
+        await updateStorage()
         dispatch({ type: DownloadListActionType.DELETE, payload: keys })
+    }
+
+    const clearStorage = async () => {
+        if (downloading) {
+            await pauseDownload()
+        }
+        dispatch({ type: DownloadListActionType.DELETE, payload: Object.keys(downloadList) })
+        await FS.unlink(DOWNLOAD_DIR)
+        await FS.mkdir(DOWNLOAD_DIR)
+        await updateStorage()
     }
 
     const checkDownloadExist = async (d: Download) => {
@@ -451,6 +487,7 @@ export const useDownload = (props: { getVideoUrl: (url: string, provider: string
 
     return {
         state: {
+            storage,
             downloading,
             progress,
             downloadList,
@@ -462,6 +499,7 @@ export const useDownload = (props: { getVideoUrl: (url: string, provider: string
             addDownloads,
             startDownload,
             pauseDownload,
+            clearStorage,
             deleteDownload,
             checkDownloadExist,
             markDownloadMissing,

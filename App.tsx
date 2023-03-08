@@ -30,7 +30,6 @@ const App = () => {
             style={{
               flex: 1,
               backgroundColor: theme.blackA(),
-              paddingHorizontal: 10,
             }}>
             {error ? (
               <View

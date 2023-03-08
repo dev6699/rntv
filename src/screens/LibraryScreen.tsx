@@ -16,6 +16,7 @@ export const LibraryScreen = () => {
 
     const {
         state: {
+            storage,
             downloadList,
             downloading,
             progress,
@@ -25,6 +26,7 @@ export const LibraryScreen = () => {
         actions: {
             startDownload,
             pauseDownload,
+            clearStorage,
             deleteDownload,
             checkDownloadExist,
             markDownloadMissing,
@@ -383,56 +385,87 @@ export const LibraryScreen = () => {
             }
 
             {
-                editMode &&
-                <TouchableHighlight
-                    onPress={() => {
-                        if (!selectedCount) {
-                            return
-                        }
+                editMode ?
+                    <TouchableHighlight
+                        onPress={() => {
+                            if (!selectedCount) {
+                                return
+                            }
 
-                        Alert.alert(
-                            'Delete download?',
-                            `${selectedCount} item(s) will be deleted.`
-                            , [
-                                {
-                                    text: 'Cancel',
-                                    style: 'cancel',
-                                },
-                                {
-                                    text: 'OK',
-                                    onPress: async () => {
-                                        setDeleting(true)
-                                        await deleteDownload(selectedDelete)
-                                        setDeleting(false)
-                                        setEditMode(false)
-                                    }
-                                },
-                            ])
+                            Alert.alert(
+                                'Delete download?',
+                                `${selectedCount} item(s) will be deleted.`
+                                , [
+                                    {
+                                        text: 'Cancel',
+                                        style: 'cancel',
+                                    },
+                                    {
+                                        text: 'OK',
+                                        onPress: async () => {
+                                            setDeleting(true)
+                                            await deleteDownload(selectedDelete)
+                                            setDeleting(false)
+                                            setEditMode(false)
+                                        }
+                                    },
+                                ])
 
-                    }}
-                >
-                    <View style={{
-                        marginTop: 'auto',
-                        alignItems: 'center',
-                        paddingVertical: 5,
-                        backgroundColor: theme.whiteA(0.2)
-                    }}>
-                        <Image
-                            style={{
-                                width: 28,
-                                height: 28,
-                            }}
-                            resizeMode='contain'
-                            source={imgAssets.delete}
-                        />
-                        <Text
-                            style={{ color: theme.whiteA() }}
-                        >
-                            Delete
-                        </Text>
-                    </View>
-                </TouchableHighlight>
+                        }}
+                    >
+                        <View style={{
+                            marginTop: 'auto',
+                            alignItems: 'center',
+                            paddingVertical: 5,
+                            backgroundColor: theme.whiteA(0.2)
+                        }}>
+                            <Image
+                                style={{
+                                    width: 28,
+                                    height: 28,
+                                }}
+                                resizeMode='contain'
+                                source={imgAssets.delete}
+                            />
+                            <Text
+                                style={{ color: theme.whiteA() }}
+                            >
+                                Delete
+                            </Text>
+                        </View>
+                    </TouchableHighlight>
+                    :
+                    <TouchableHighlight
+                        style={{
+                            backgroundColor: theme.whiteA(0.2),
+                            padding: 10
+                        }}
+                        onPress={() => {
+                            Alert.alert(
+                                'Clear storage?',
+                                `All item(s) will be deleted.`
+                                , [
+                                    {
+                                        text: 'Cancel',
+                                        style: 'cancel',
+                                    },
+                                    {
+                                        text: 'OK',
+                                        onPress: async () => {
+                                            setDeleting(true)
+                                            await clearStorage()
+                                            setDeleting(false)
+                                        }
+                                    },
+                                ])
+                        }}
+                    >
+                        <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
+                            <Text style={{ color: theme.whiteA() }}>Storage Used:</Text>
+                            <Text style={{ color: theme.whiteA() }}>{storage}</Text>
+                        </View>
+                    </TouchableHighlight>
             }
-        </View>
+        </View >
     )
 }
