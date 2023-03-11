@@ -14,37 +14,18 @@ RNTV is a video streaming tv/mobile/desktop application. Stream video from your 
 
 - [What is RNTV?](#what-is-rntv)
 - [Table of Contents](#table-of-contents)
-- [Screenshots](#screenshots)
+- [Flow](#flow)
 - [Installation](#installation)
 - [Development](#development)
 - [Add your video sources](#add-your-video-sources)
 - [Release build](#release-build)
 - [License](#license)
 
-## Screenshots
+## Flow
 
-<table>
-  <tr>
-      <td>Android Phone</td>
-      <td>Android TV</td>
-      <td>Windows Desktop</td>
-  </tr>
-  <tr>
-    <td valign="top" width="30%"> 
-      <img src="./docs/screenshot-6.png" width="100%" height="100%">
-      <img src="./docs/screenshot-7.png" width="100%" height="100%">
-    </td>
-    <td valign="top" width="35%">
-      <img src="./docs/screenshot-1.png" width="100%" height="100%">
-       <img src="./docs/screenshot-2.png" width="100%" height="100%">
-        <img src="./docs/screenshot-3.png" width="100%" height="100%">
-         <img src="./docs/screenshot-4.png" width="100%" height="100%">
-    </td>
-    <td valign="top" width="35%">
-      <img src="./docs/screenshot-5.png" width="100%" height="100%">
-    </td>
-  </tr>
- </table>
+Made by _[Lunacy](https://icons8.com/lunacy)_
+
+<img src="./docs/flow.png" width="100%" height="100%">
 
 ## Installation
 
