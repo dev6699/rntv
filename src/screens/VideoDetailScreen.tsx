@@ -296,14 +296,14 @@ export const VideoDetailScreen: React.FC = () => {
                     }}
                   />
                 }
-                <Text style={{ color: theme.whiteA() }}>All</Text>
+                <Text style={{ color: theme.whiteA() }}>{i18n.t('all')}</Text>
               </View>
               <Text style={{ color: theme.whiteA(), paddingLeft: 10 }}>
                 {
                   selectedDownload.size > 0 ?
-                    selectedDownload.size + ' selected'
+                    selectedDownload.size + ' ' + i18n.t('selected')
                     :
-                    'Select items'
+                    i18n.t('selectItems')
                 }
               </Text>
             </View>
@@ -346,7 +346,7 @@ export const VideoDetailScreen: React.FC = () => {
                 }).start()
               }, 3000)
             }}
-            text='Download'
+            text={i18n.t('download')}
           />
         </View>
       }
@@ -364,7 +364,7 @@ export const VideoDetailScreen: React.FC = () => {
           paddingHorizontal: 20,
         }}
       >
-        <Text style={{ color: theme.blackA() }}>Downloading...</Text>
+        <Text style={{ color: theme.blackA() }}>{i18n.t('downloading')}...</Text>
         <Button
           onPress={() => {
             setPage('library')

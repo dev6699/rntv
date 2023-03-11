@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { ActivityIndicator, Alert, FlatList, Image, Switch, Text, TouchableHighlight, View } from "react-native"
 
+import { i18n } from '../../i18n';
 import { Button } from '../components';
 import { imgAssets, theme } from '../utils';
 import { DownloadList } from '../hooks/useDownload';
@@ -108,15 +109,15 @@ export const LibraryScreen = () => {
                                     <Text style={{
                                         color: theme.whiteA(), fontSize: 10,
                                     }}>
-                                        All
+                                        {i18n.t('all')}
                                     </Text>
                                 </View>
                                 <Text style={{ color: theme.whiteA(), fontSize: 16 }}>
                                     {
                                         selectedCount > 0 ?
-                                            selectedCount + ' selected'
+                                            selectedCount + ' ' + i18n.t('selected')
                                             :
-                                            'Select items'
+                                            i18n.t('selectItems')
                                     }
                                 </Text>
                             </View>
@@ -139,7 +140,7 @@ export const LibraryScreen = () => {
                     <View style={{ padding: 5, flex: 1, }}>
                         <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
                             <Text style={{ color: theme.whiteA(), fontSize: 20 }}>
-                                Downloads
+                                {i18n.t('downloads')}
                             </Text>
 
                             {
@@ -176,7 +177,7 @@ export const LibraryScreen = () => {
                                 }}
                             >
                                 <Text style={{ color: theme.whiteA(0.7) }}>
-                                    Wi-Fi Only
+                                    {i18n.t('wifiOnly')}
                                 </Text>
                                 <Switch
                                     trackColor={{ false: theme.whiteA(0.3), true: theme.whiteA(0.7) }}
@@ -194,7 +195,7 @@ export const LibraryScreen = () => {
                                 }}
                             >
                                 <Text style={{ color: theme.whiteA(0.7) }}>
-                                    Auto Download
+                                    {i18n.t('autoDownload')}
                                 </Text>
                                 <Switch
                                     trackColor={{ false: theme.whiteA(0.3), true: theme.whiteA(0.7) }}
@@ -216,10 +217,10 @@ export const LibraryScreen = () => {
                             source={imgAssets.nothing}
                         />
                         <Text style={{ color: theme.whiteA(), fontSize: 22, marginVertical: 5 }}>
-                            No items found
+                            {i18n.t('noItemsFound')}
                         </Text>
                         <Text style={{ color: theme.whiteA(0.8), fontSize: 16, textAlign: 'center' }}>
-                            Looks like you haven't download any video yet...!!!
+                            {i18n.t('noVideoDownloaded')}...!!!
                         </Text>
 
                         <Button
@@ -237,14 +238,13 @@ export const LibraryScreen = () => {
                                 backgroundColor: theme.whiteA(0.2),
                                 flex: 0
                             }}
-                            text='Explore'
+                            text={i18n.t('explore')}
                         />
                     </View>
                     :
-
                     <FlatList
                         data={Object.entries(downloadList)}
-                        renderItem={({ item, index }) => {
+                        renderItem={({ item }) => {
                             const [_, d] = item
                             const selected = selectedDelete[d.href]
                             return (
@@ -354,7 +354,7 @@ export const LibraryScreen = () => {
                                                             alignItems: 'center'
                                                         }}>
                                                             <Text style={{ color: theme.whiteA(0.5) }}>
-                                                                Download paused
+                                                                {i18n.t('downloadPaused')}
                                                             </Text>
                                                             <TouchableHighlight
                                                                 onPress={() => {
@@ -393,15 +393,15 @@ export const LibraryScreen = () => {
                             }
 
                             Alert.alert(
-                                'Delete download?',
-                                `${selectedCount} item(s) will be deleted.`
+                                i18n.t('deleteDownload'),
+                                `${selectedCount} ${i18n.t('itemsWillBeDeleted')}`
                                 , [
                                     {
-                                        text: 'Cancel',
+                                        text: i18n.t('cancel'),
                                         style: 'cancel',
                                     },
                                     {
-                                        text: 'OK',
+                                        text: i18n.t('ok'),
                                         onPress: async () => {
                                             setDeleting(true)
                                             await deleteDownload(selectedDelete)
@@ -430,7 +430,7 @@ export const LibraryScreen = () => {
                             <Text
                                 style={{ color: theme.whiteA() }}
                             >
-                                Delete
+                                {i18n.t('delete')}
                             </Text>
                         </View>
                     </TouchableHighlight>
@@ -442,15 +442,15 @@ export const LibraryScreen = () => {
                         }}
                         onPress={() => {
                             Alert.alert(
-                                'Clear storage?',
-                                `All item(s) will be deleted.`
+                                i18n.t('clearStorage'),
+                                i18n.t('allItemDelete')
                                 , [
                                     {
-                                        text: 'Cancel',
+                                        text: i18n.t('cancel'),
                                         style: 'cancel',
                                     },
                                     {
-                                        text: 'OK',
+                                        text: i18n.t('ok'),
                                         onPress: async () => {
                                             setDeleting(true)
                                             await clearStorage()
@@ -461,7 +461,7 @@ export const LibraryScreen = () => {
                         }}
                     >
                         <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
-                            <Text style={{ color: theme.whiteA() }}>Storage Used:</Text>
+                            <Text style={{ color: theme.whiteA() }}>{i18n.t('storageUsed')}:</Text>
                             <Text style={{ color: theme.whiteA() }}>{storage}</Text>
                         </View>
                     </TouchableHighlight>

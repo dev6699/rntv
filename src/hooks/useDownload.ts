@@ -3,6 +3,7 @@ import React, { useEffect, useReducer, useRef, useState } from "react";
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import RNFetchBlob, { FetchBlobResponse, StatefulPromise } from "react-native-blob-util";
 
+import { i18n } from "../../i18n";
 import { VIDEO_EXT, loadVideoChunks } from '../utils/m3u8'
 
 export type TDownloadContext = ReturnType<typeof useDownload>
@@ -235,7 +236,7 @@ export const useDownload = (props: { getVideoUrl: (url: string, provider: string
 
     const mergeFiles = async (dirname: string, videoname: string, files: string[]) => {
         console.log('merging...')
-        setProgress('Processing files...')
+        setProgress(i18n.t('processingFiles') + '...')
 
         const outFile = `${DOWNLOAD_DIR}/${dirname}/${videoname}${VIDEO_EXT}`
         const exist = await FS.exists(outFile)
@@ -279,7 +280,7 @@ export const useDownload = (props: { getVideoUrl: (url: string, provider: string
 
     const downloadFailed = (d: Download) => {
         dispatch({ type: DownloadListActionType.FAILED, payload: d.href })
-        setProgress('Failed.')
+        setProgress(i18n.t('failed'))
         setDownloading('')
     }
 
@@ -294,7 +295,7 @@ export const useDownload = (props: { getVideoUrl: (url: string, provider: string
             await pauseDownload()
         }
 
-        setProgress('Connecting...')
+        setProgress(i18n.t('connecting') + '...')
         setDownloading(d.href)
 
         try {
@@ -318,7 +319,7 @@ export const useDownload = (props: { getVideoUrl: (url: string, provider: string
                 videoChunks,
                 downloadVideoFile,
                 (completed, total) => {
-                    setProgress(`Downloading... ${(completed / total * 100).toFixed(2)}%`)
+                    setProgress(`${i18n.t('downloading')}... ${(completed / total * 100).toFixed(2)}%`)
                     // console.log("Progress: ", videoName, (completed / total * 100).toFixed(2))
                 },
                 5

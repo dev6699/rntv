@@ -23,7 +23,7 @@ RNTV is a video streaming tv/mobile/desktop application. Stream video from your 
 
 ## Flow
 
-Made by _[Lunacy](https://icons8.com/lunacy)_
+Made with _[Lunacy](https://icons8.com/lunacy)_
 
 <img src="./docs/flow.png" width="100%" height="100%">
 

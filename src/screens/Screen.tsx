@@ -1,6 +1,7 @@
 import React from 'react';
 import { ActivityIndicator, Image, Platform, View } from 'react-native';
 
+import { i18n } from '../../i18n';
 import { Button } from '../components';
 import { imgAssets, theme } from '../utils';
 import { useNavContext, useVideoContext } from '../hooks';
@@ -58,7 +59,7 @@ export const Screen = () => {
                   style={{ height: 24 }}
                   resizeMode='contain'
                   source={page === 'home' ? imgAssets.homeFill : imgAssets.homeLine} />}
-                text='Home'
+                text={i18n.t('home')}
               />
 
               <Button
@@ -75,7 +76,7 @@ export const Screen = () => {
                   style={{ height: 24 }}
                   resizeMode='contain'
                   source={page === 'library' ? imgAssets.libraryFill : imgAssets.libraryLine} />}
-                text='Library'
+                text={i18n.t('library')}
               />
             </View>
           }
