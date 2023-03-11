@@ -358,7 +358,7 @@ export const LibraryScreen = () => {
                                                             </Text>
                                                             <TouchableHighlight
                                                                 onPress={() => {
-                                                                    if (editMode) {
+                                                                    if (editMode || d.failed) {
                                                                         return
                                                                     }
                                                                     startDownload(d, true)
@@ -371,7 +371,7 @@ export const LibraryScreen = () => {
                                                                         height: 28,
                                                                     }}
                                                                     resizeMode='contain'
-                                                                    source={imgAssets.downloadRound}
+                                                                    source={d.failed ? imgAssets.error : imgAssets.downloadRound}
                                                                 />
                                                             </TouchableHighlight>
                                                         </View>

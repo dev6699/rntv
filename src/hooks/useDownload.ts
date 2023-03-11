@@ -16,6 +16,7 @@ export type Download = {
     provider: string
     // download is considered done once path is defined
     path?: string
+    failed?: boolean
 }
 export type DownloadList = Record<string, Download>
 
@@ -30,13 +31,20 @@ enum DownloadListActionType {
     NEW,
     COMPLETE,
     DELETE,
-    MISSING
+    MISSING,
+    FAILED
 }
 type NewDownloadListAction = { type: DownloadListActionType.NEW, payload: DownloadList }
 type CompleteDownloadListAction = { type: DownloadListActionType.COMPLETE, payload: { href: string, path: string } }
 type DeleteDownloadListAction = { type: DownloadListActionType.DELETE, payload: string[] }
 type MissingDownloadListAction = { type: DownloadListActionType.MISSING, payload: string }
-type DownloadListAction = NewDownloadListAction | CompleteDownloadListAction | DeleteDownloadListAction | MissingDownloadListAction
+type FailedDownloadListAction = { type: DownloadListActionType.FAILED, payload: string }
+type DownloadListAction =
+    | NewDownloadListAction
+    | CompleteDownloadListAction
+    | DeleteDownloadListAction
+    | MissingDownloadListAction
+    | FailedDownloadListAction
 
 const downloadListReducer = (state: DownloadList, action: DownloadListAction): DownloadList => {
     switch (action.type) {
@@ -71,6 +79,16 @@ const downloadListReducer = (state: DownloadList, action: DownloadListAction): D
                 [action.payload]: {
                     ...state[action.payload],
                     path: undefined
+                }
+            };
+        }
+
+        case DownloadListActionType.FAILED: {
+            return {
+                ...state,
+                [action.payload]: {
+                    ...state[action.payload],
+                    failed: true
                 }
             };
         }
@@ -259,7 +277,8 @@ export const useDownload = (props: { getVideoUrl: (url: string, provider: string
         })
     }
 
-    const downloadFailed = () => {
+    const downloadFailed = (d: Download) => {
+        dispatch({ type: DownloadListActionType.FAILED, payload: d.href })
         setProgress('Failed.')
         setDownloading('')
     }
@@ -281,13 +300,13 @@ export const useDownload = (props: { getVideoUrl: (url: string, provider: string
         try {
             const vidUrl = await props.getVideoUrl(d.href, d.provider)
             if (!vidUrl) {
-                downloadFailed()
+                downloadFailed(d)
                 return
             }
             const [videoChunks, encrypted] = await loadVideoChunks(vidUrl)
-            if (videoChunks.length === 0) {
+            if (videoChunks.length === 0 || encrypted) {
                 // failed to get chunks, probably some weird extension
-                downloadFailed()
+                downloadFailed(d)
                 return
             }
 
@@ -316,7 +335,7 @@ export const useDownload = (props: { getVideoUrl: (url: string, provider: string
             dispatch({ type: DownloadListActionType.COMPLETE, payload: { href: d.href, path: d.path! } })
             releasePause()
         } catch (err) {
-            downloadFailed()
+            downloadFailed(d)
             console.error(err)
         }
     }
