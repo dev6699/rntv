@@ -1,8 +1,9 @@
-import axios from 'axios';
 import { PermissionsAndroid } from "react-native";
 import React, { useEffect, useReducer, useRef, useState } from "react";
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import RNFetchBlob, { FetchBlobResponse, StatefulPromise } from "react-native-blob-util";
+
+import { VIDEO_EXT, loadVideoChunks } from '../utils/m3u8'
 
 export type TDownloadContext = ReturnType<typeof useDownload>
 export const DownloadContext = React.createContext<TDownloadContext>({} as TDownloadContext);
@@ -24,9 +25,6 @@ const DOWNLOAD_KEY = 'download'
 const FETCH_BLOB = RNFetchBlob
 const FS = RNFetchBlob.fs
 const DOWNLOAD_DIR = FS.dirs.DownloadDir
-const VIDEO_EXT = '.ts'
-const PNG_EXT = '.png'
-const BMP_EXT = '.bmp'
 
 enum DownloadListActionType {
     NEW,
@@ -157,41 +155,7 @@ export const useDownload = (props: { getVideoUrl: (url: string, provider: string
         setStorage(`${size.toFixed(2)} ${unit}`)
     }
 
-    const loadVideoChunks = async (url: string): Promise<string[]> => {
-        const res = await axios.get(url)
 
-        if ((res.data as string).includes('m3u8')) {
-            const lines: string[] = res.data.split('\n')
-            let m3u8 = lines.find(l => l.includes('m3u8'))
-
-            if (!(m3u8!.startsWith('http://') || m3u8!.startsWith('https://'))) {
-                const urlParts = url.split('/')
-                const hostname = urlParts[0] + "//" + urlParts[2]
-                m3u8 = hostname + m3u8
-
-                return loadVideoChunks(m3u8)
-            }
-        }
-
-        const chunks = res.data.split('\n')
-
-        const files: string[] = []
-        for (const line of chunks) {
-            if (
-                line.endsWith(VIDEO_EXT) ||
-                line.includes(VIDEO_EXT + "?") ||
-                line.endsWith(PNG_EXT) ||
-                line.includes(PNG_EXT + "?") ||
-                line.endsWith(BMP_EXT) ||
-                line.includes(BMP_EXT + "?")
-            ) {
-                if (line.startsWith('http://') || line.startsWith('https://')) {
-                    files.push(line)
-                }
-            }
-        }
-        return files
-    }
 
     const startTasks = async<T = any>(
         taskGroupName: string,
@@ -320,7 +284,7 @@ export const useDownload = (props: { getVideoUrl: (url: string, provider: string
                 downloadFailed()
                 return
             }
-            const videoChunks = await loadVideoChunks(vidUrl)
+            const [videoChunks, encrypted] = await loadVideoChunks(vidUrl)
             if (videoChunks.length === 0) {
                 // failed to get chunks, probably some weird extension
                 downloadFailed()
