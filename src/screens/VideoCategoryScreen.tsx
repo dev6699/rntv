@@ -14,7 +14,6 @@ export const VideoCategoryScreen = () => {
           display: 'flex',
           flexDirection: 'row',
           alignItems: 'center',
-          marginBottom: 10,
         }}>
         <BackButton />
         <Text style={{ fontSize: 20, color: theme.whiteA() }}>

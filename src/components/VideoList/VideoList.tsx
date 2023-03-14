@@ -28,9 +28,7 @@ export const VideoList: React.FC<{
         return (
           <View
             key={title + index}
-            style={{
-              marginBottom: 15,
-            }}>
+          >
             <View
               style={{
                 flex: 1,
@@ -52,8 +50,7 @@ export const VideoList: React.FC<{
                   onPress={() => onMorePress(href, title)}
                   text={i18n.t('more')}
                   style={{
-                    paddingVertical: 0,
-                    paddingHorizontal: 10,
+                    marginLeft: 'auto',
                   }}
                 />
               ) : null}

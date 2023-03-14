@@ -169,15 +169,17 @@ export const VideoDetailScreen: React.FC = () => {
                 return (
                   <View style={{
                     width: isPortrait ? '33%' : '25%',
-                    flexDirection: 'row',
-                    alignItems: 'center',
-                    paddingLeft: 5
                   }}>
 
                     <Button
+                      style={{
+                        paddingLeft: 15,
+                        alignItems: 'center',
+                        justifyContent: 'flex-start',
+                        display: 'flex'
+                      }}
                       textStyle={{
                         color: !downloadMode && item.watched ? theme.primary : theme.whiteA(),
-                        paddingLeft: 0
                       }}
                       text={item.ep}
                       key={item.href + index}
