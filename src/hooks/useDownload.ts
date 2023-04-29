@@ -6,6 +6,8 @@ import RNFetchBlob, { FetchBlobResponse, StatefulPromise } from "react-native-bl
 import { i18n } from "../../i18n";
 import { VIDEO_EXT, decrypt, loadVideoChunks } from '../utils/m3u8'
 
+type DownloadTaskHandler<T> = (item: string, taskGroupName: string, taskName: string, id: number, singleUpdate: boolean) => Promise<T>
+
 export type TDownloadContext = ReturnType<typeof useDownload>
 export const DownloadContext = React.createContext<TDownloadContext>({} as TDownloadContext);
 export const useDownloadContext = () => React.useContext(DownloadContext);
@@ -174,13 +176,11 @@ export const useDownload = (props: { getVideoUrl: (url: string, provider: string
         setStorage(`${size.toFixed(2)} ${unit}`)
     }
 
-
-
     const startTasks = async<T = any>(
         taskGroupName: string,
         taskName: string,
         taskList: string[],
-        taskHandlePromise: (item: string, taskGroupName: string, taskName: string, id: number) => Promise<T>,
+        taskHandlePromise: DownloadTaskHandler<T>,
         updateFunc: (completed: number, total: number) => void,
         limit = 3
     ) => {
@@ -200,7 +200,7 @@ export const useDownload = (props: { getVideoUrl: (url: string, provider: string
             }
 
             try {
-                const r = await taskHandlePromise(item.t, taskGroupName, taskName, item.id)
+                const r = await taskHandlePromise(item.t, taskGroupName, taskName, item.id, total === 1)
                 results[item.id] = r
                 completed++
                 updateFunc(completed, total)
@@ -265,7 +265,7 @@ export const useDownload = (props: { getVideoUrl: (url: string, provider: string
         return outFile
     }
 
-    const downloadVideoFile = async (url: string, dirname: string, videoname: string, id: number) => {
+    const downloadVideoFile: DownloadTaskHandler<string> = async (url, dirname, videoname, id, singleUpdate) => {
         const path = DOWNLOAD_DIR + `/${dirname}/${videoname}/${id}${VIDEO_EXT}`
         const exist = await FS.exists(path)
         if (exist) {
@@ -278,8 +278,11 @@ export const useDownload = (props: { getVideoUrl: (url: string, provider: string
                 path,
             })
             .fetch("GET", url)
-            .progress((received, total) => {
+            .progress((completed, total) => {
                 // console.log('prog:', received, total)
+                if (singleUpdate) {
+                    setProgress(`${i18n.t('downloading')}... ${(completed / total * 100).toFixed(2)}%`)
+                }
             })
 
         tasksRef.current[id] = task

@@ -7,6 +7,10 @@ const PNG_EXT = '.png'
 const BMP_EXT = '.bmp'
 
 export const loadVideoChunks = async (url: string): Promise<[string[], string]> => {
+    if (!url.includes('.m3u8')) {
+        return [[url], '']
+    }
+
     const res = await axios.get(url)
 
     if ((res.data as string).includes('m3u8')) {
