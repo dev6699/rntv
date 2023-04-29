@@ -4,7 +4,7 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import RNFetchBlob, { FetchBlobResponse, StatefulPromise } from "react-native-blob-util";
 
 import { i18n } from "../../i18n";
-import { VIDEO_EXT, loadVideoChunks } from '../utils/m3u8'
+import { VIDEO_EXT, decrypt, loadVideoChunks } from '../utils/m3u8'
 
 export type TDownloadContext = ReturnType<typeof useDownload>
 export const DownloadContext = React.createContext<TDownloadContext>({} as TDownloadContext);
@@ -234,7 +234,7 @@ export const useDownload = (props: { getVideoUrl: (url: string, provider: string
         return results
     };
 
-    const mergeFiles = async (dirname: string, videoname: string, files: string[]) => {
+    const mergeFiles = async (dirname: string, videoname: string, files: string[], decryptKey: string) => {
         console.log('merging...')
         setProgress(i18n.t('processingFiles') + '...')
 
@@ -245,7 +245,18 @@ export const useDownload = (props: { getVideoUrl: (url: string, provider: string
         }
 
         for (const f of files) {
-            await FS.appendFile(outFile, f, 'uri')
+            if (decryptKey) {
+                // TODO: figure out why exoplayer cant play
+                // NOTE: playable on vlc player 
+                const base64 = await FS.readFile(f, 'base64')
+                const decrypted = decrypt(decryptKey, base64)
+                await FS.appendFile(outFile, FETCH_BLOB.base64.encode(Array(decrypted.length)
+                    .fill('')
+                    .map((_, i) => String.fromCharCode(decrypted[i]))
+                    .join('')), 'base64')
+            } else {
+                await FS.appendFile(outFile, f, 'uri')
+            }
         }
 
         await FS.unlink(`${DOWNLOAD_DIR}/${dirname}/${videoname}`)
@@ -304,9 +315,10 @@ export const useDownload = (props: { getVideoUrl: (url: string, provider: string
                 downloadFailed(d)
                 return
             }
-            const [videoChunks, encrypted] = await loadVideoChunks(vidUrl)
-            if (videoChunks.length === 0 || encrypted) {
-                // failed to get chunks, probably some weird extension
+            const [videoChunks, decryptKey] = await loadVideoChunks(vidUrl)
+            // if (videoChunks.length === 0) {
+            if (videoChunks.length === 0 || decryptKey) {
+                // failed to get chunks, probably some weird extension or aes encrypted
                 downloadFailed(d)
                 return
             }
@@ -329,7 +341,7 @@ export const useDownload = (props: { getVideoUrl: (url: string, provider: string
                 return
             }
 
-            const path = await mergeFiles(d.name, videoName, files)
+            const path = await mergeFiles(d.name, videoName, files, decryptKey)
             d.path = path
             await updateStorage()
             setDownloading('')
