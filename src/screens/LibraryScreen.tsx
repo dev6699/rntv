@@ -306,7 +306,7 @@ const NoDownload = () => {
     const { setPage } = useNavContext()
 
     return (
-        <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center' }}>
+        <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center', paddingTop: 20 }}>
             <Image
                 resizeMode='contain'
                 source={imgAssets.nothing}

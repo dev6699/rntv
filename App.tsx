@@ -1,6 +1,6 @@
 import 'react-native/tvos-types.d';
 import React, { useEffect } from 'react';
-import { SafeAreaView, ActivityIndicator, View, Text, } from 'react-native';
+import { SafeAreaView, View, Text } from 'react-native';
 
 import { useNav, NavContext, useVideo, VideoContext, useDownload, DownloadContext } from './src/hooks';
 import { Screen } from './src/screens';
@@ -31,35 +31,8 @@ const App = () => {
               flex: 1,
               backgroundColor: theme.blackA(),
             }}>
-            {error ? (
-              <View
-                style={{
-                  padding: 10,
-                  alignItems: 'center',
-                  backgroundColor: theme.warn,
-                }}>
-                <Text
-                  style={{
-                    fontSize: 24,
-                    fontWeight: 'bold',
-                    color: theme.whiteA(),
-                  }}>
-                  {error}
-                </Text>
-              </View>
-            ) : null}
-            {video.state.init ? (
-              <Screen />
-            ) : (
-              <View
-                style={{
-                  flex: 1,
-                  alignItems: 'center',
-                  justifyContent: 'center',
-                }}>
-                <ActivityIndicator size={100} color={theme.primary} />
-              </View>
-            )}
+            {error && <Error text={error} />}
+            <Screen />
           </SafeAreaView>
         </NavContext.Provider>
       </DownloadContext.Provider>
@@ -67,4 +40,23 @@ const App = () => {
   );
 };
 
+const Error: React.FC<{ text: string }> = ({ text }) => {
+  return (
+    <View
+      style={{
+        padding: 10,
+        alignItems: 'center',
+        backgroundColor: theme.warn,
+      }}>
+      <Text
+        style={{
+          fontSize: 24,
+          fontWeight: 'bold',
+          color: theme.whiteA(),
+        }}>
+        {text}
+      </Text>
+    </View>
+  )
+}
 export default App;

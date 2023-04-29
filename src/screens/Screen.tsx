@@ -14,12 +14,12 @@ import { VideoCategoryScreen } from './VideoCategoryScreen';
 import { LibraryScreen } from './LibraryScreen';
 
 export const Screen = () => {
-  const { page, setPage } = useNavContext();
+  const { page } = useNavContext();
   const { state } = useVideoContext();
 
   return (
     <>
-      {state.loading && (
+      {state.loading && state.init && (
         <ActivityIndicator
           color={theme.primary}
           size={48}
@@ -35,51 +35,7 @@ export const Screen = () => {
       {page === 'home' || page === 'library' ? (
         <>
           {page === 'home' ? <HomeScreen /> : <LibraryScreen />}
-          {!Platform.isTV &&
-            <View
-              style={{
-                flexDirection: 'row',
-                alignItems: 'center',
-                borderTopColor: theme.whiteA(0.2),
-                borderTopWidth: 1,
-                marginTop: 'auto'
-              }}>
-
-              <Button
-                touchStyle={{ flex: 1 }}
-                style={{
-                  flexDirection: 'column',
-                  flex: 0,
-                }}
-                textStyle={{
-                  padding: 0
-                }}
-                onPress={() => setPage('home')}
-                icon={<Image
-                  style={{ height: 24 }}
-                  resizeMode='contain'
-                  source={page === 'home' ? imgAssets.homeFill : imgAssets.homeLine} />}
-                text={i18n.t('home')}
-              />
-
-              <Button
-                touchStyle={{ flex: 1 }}
-                style={{
-                  flexDirection: 'column',
-                  flex: 0,
-                }}
-                textStyle={{
-                  padding: 0
-                }}
-                onPress={() => setPage('library')}
-                icon={<Image
-                  style={{ height: 24 }}
-                  resizeMode='contain'
-                  source={page === 'library' ? imgAssets.libraryFill : imgAssets.libraryLine} />}
-                text={i18n.t('library')}
-              />
-            </View>
-          }
+          {!Platform.isTV && <BottomNavigation />}
         </>
       ) : page === 'category' ? (
         <VideoCategoryScreen />
@@ -93,3 +49,54 @@ export const Screen = () => {
     </>
   );
 };
+
+
+const BottomNavigation = () => {
+  const { page, setPage } = useNavContext();
+
+  return (
+    <View
+      style={{
+        flexDirection: 'row',
+        alignItems: 'center',
+        borderTopColor: theme.whiteA(0.2),
+        borderTopWidth: 1,
+        marginTop: 'auto'
+      }}>
+
+      <Button
+        touchStyle={{ flex: 1 }}
+        style={{
+          flexDirection: 'column',
+          flex: 0,
+        }}
+        textStyle={{
+          padding: 0
+        }}
+        onPress={() => setPage('home')}
+        icon={<Image
+          style={{ height: 24 }}
+          resizeMode='contain'
+          source={page === 'home' ? imgAssets.homeFill : imgAssets.homeLine} />}
+        text={i18n.t('home')}
+      />
+
+      <Button
+        touchStyle={{ flex: 1 }}
+        style={{
+          flexDirection: 'column',
+          flex: 0,
+        }}
+        textStyle={{
+          padding: 0
+        }}
+        onPress={() => setPage('library')}
+        icon={<Image
+          style={{ height: 24 }}
+          resizeMode='contain'
+          source={page === 'library' ? imgAssets.libraryFill : imgAssets.libraryLine} />}
+        text={i18n.t('library')}
+      />
+    </View>
+  )
+}

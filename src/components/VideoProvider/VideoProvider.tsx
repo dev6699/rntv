@@ -25,7 +25,6 @@ export const VideoProvider: React.FC<{
               marginRight: 10
             }}
             style={{
-              paddingVertical: 10,
               paddingHorizontal: 15,
               borderRadius: 12,
               backgroundColor: active ? theme.whiteA() : theme.grayA(0.4),

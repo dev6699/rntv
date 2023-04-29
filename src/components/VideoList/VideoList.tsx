@@ -12,13 +12,11 @@ export const VideoList: React.FC<{
   videoGroup: TVideosRec[];
   onVideoPress: (v: TVideo) => void;
   onMorePress: (path: string, name: string) => void;
-  ListHeaderComponent?: JSX.Element;
-}> = ({ videoGroup, ListHeaderComponent, onVideoPress, onMorePress }) => {
+}> = ({ videoGroup, onVideoPress, onMorePress }) => {
   const { numCols } = useOrientation();
 
   return (
     <FlatList
-      ListHeaderComponent={ListHeaderComponent}
       data={videoGroup}
       renderItem={({ item, index }) => {
         const { title, href, videos } = item;
@@ -42,6 +40,7 @@ export const VideoList: React.FC<{
                   flex: 1,
                   fontSize: 20,
                   color: theme.whiteA(),
+                  paddingBottom: 10
                 }}>
                 {title}
               </Text>
