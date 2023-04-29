@@ -22,7 +22,7 @@
     "react": "18.0.0",
     "react-native": "npm:react-native-tvos@0.69.6-3",
     "react-native-blob-util": "^0.17.2",
-    "react-native-video": "6.0.0-alpha.1",
+    "react-native-video": "6.0.0-alpha.6",
     "react-native-windows": "0.68.16"
   },
   "devDependencies": {
