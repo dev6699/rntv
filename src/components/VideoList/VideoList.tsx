@@ -1,5 +1,5 @@
-import React from 'react';
-import { FlatList, Text, View } from 'react-native';
+import React, { useState } from 'react';
+import { FlatList, RefreshControl, Text, View } from 'react-native';
 import { i18n } from '../../../i18n';
 import { useOrientation } from '../../hooks';
 
@@ -12,12 +12,26 @@ export const VideoList: React.FC<{
   videoGroup: TVideosRec[];
   onVideoPress: (v: TVideo) => void;
   onMorePress: (path: string, name: string) => void;
-}> = ({ videoGroup, onVideoPress, onMorePress }) => {
+  scrollRef?: React.RefObject<FlatList>
+  onRefresh?: () => Promise<void>
+}> = ({ videoGroup, onVideoPress, onMorePress, scrollRef, onRefresh }) => {
   const { numCols } = useOrientation();
+  const [refreshing, setRefreshing] = useState(false);
+
+  const refresh = async () => {
+    if (!onRefresh) {
+      return
+    }
+    setRefreshing(true);
+    await onRefresh()
+    setRefreshing(false);
+  }
 
   return (
     <FlatList
+      ref={scrollRef}
       data={videoGroup}
+      refreshControl={onRefresh ? <RefreshControl refreshing={refreshing} onRefresh={refresh} /> : undefined}
       renderItem={({ item, index }) => {
         const { title, href, videos } = item;
         if (videos.length < 1) {

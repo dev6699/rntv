@@ -1,5 +1,5 @@
-import React from 'react';
-import { ActivityIndicator, Image, Platform, View } from 'react-native';
+import React, { useRef } from 'react';
+import { ActivityIndicator, FlatList, Image, Platform, View } from 'react-native';
 
 import { i18n } from '../../i18n';
 import { Button } from '../components';
@@ -16,6 +16,8 @@ import { LibraryScreen } from './LibraryScreen';
 export const Screen = () => {
   const { page } = useNavContext();
   const { state } = useVideoContext();
+
+  const scrollRef = useRef<FlatList>(null)
 
   return (
     <>
@@ -34,8 +36,8 @@ export const Screen = () => {
       )}
       {page === 'home' || page === 'library' ? (
         <>
-          {page === 'home' ? <HomeScreen /> : <LibraryScreen />}
-          {!Platform.isTV && <BottomNavigation />}
+          {page === 'home' ? <HomeScreen scrollRef={scrollRef} /> : <LibraryScreen />}
+          {!Platform.isTV && <BottomNavigation scrollRef={scrollRef} />}
         </>
       ) : page === 'category' ? (
         <VideoCategoryScreen />
@@ -51,7 +53,9 @@ export const Screen = () => {
 };
 
 
-const BottomNavigation = () => {
+const BottomNavigation: React.FC<{
+  scrollRef: React.RefObject<FlatList>
+}> = ({ scrollRef }) => {
   const { page, setPage } = useNavContext();
 
   return (
@@ -73,7 +77,10 @@ const BottomNavigation = () => {
         textStyle={{
           padding: 0
         }}
-        onPress={() => setPage('home')}
+        onPress={() => {
+          setPage('home')
+          scrollRef.current?.scrollToOffset({ offset: 0, animated: true })
+        }}
         icon={<Image
           style={{ height: 24 }}
           resizeMode='contain'

@@ -1,12 +1,14 @@
 import React from 'react';
-import { ActivityIndicator, View } from 'react-native';
+import { ActivityIndicator, FlatList, View } from 'react-native';
 
 import { i18n } from '../../i18n';
 import { theme } from '../utils';
 import { useVideoContext } from '../hooks';
 import { VideoList, VideoProvider, VideoSearch } from '../components';
 
-export const HomeScreen = () => {
+export const HomeScreen: React.FC<{
+  scrollRef: React.RefObject<FlatList>
+}> = ({ scrollRef }) => {
   const { state, actions } = useVideoContext();
 
   const search = {
@@ -20,6 +22,10 @@ export const HomeScreen = () => {
     videos: state.favouriteVideos,
   };
   const videos = [search, favourite, ...state.videos];
+
+  const refreshVideos = async () => {
+    await actions.refreshHomeList()
+  }
 
   return (
     <View style={{ flex: 1 }}>
@@ -60,6 +66,8 @@ export const HomeScreen = () => {
           onMorePress={actions.getVideoCategory}
           onVideoPress={actions.showVideoDetail}
           videoGroup={videos}
+          scrollRef={scrollRef}
+          onRefresh={refreshVideos}
         />
       }
     </View>

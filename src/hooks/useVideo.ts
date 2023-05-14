@@ -66,6 +66,11 @@ export const useVideo = (nav: TNavContext) => {
         }
     }
 
+    const refreshHomeList = async () => {
+        const videos = await withErrBound(tvService.getHomeVideoList())
+        setVideos(videos || [])
+    }
+
     const getVideoCategory = async (path: string, category: string) => {
         const videos = await withErrBound(tvService.getVideoCategory(path))
         if (!videos) {
@@ -298,7 +303,8 @@ export const useVideo = (nav: TNavContext) => {
             showVideoDetail,
             saveFavourite,
             isFavourite,
-            removeFavourite
+            removeFavourite,
+            refreshHomeList
         }
     } as const
 }

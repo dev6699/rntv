@@ -16,6 +16,10 @@ export const useNav = () => {
     const history = useRef<TPage[]>(['home']).current
 
     const setPage = (p: TPage, replace?: boolean) => {
+        if (history[history.length - 1] === p) {
+            return
+        }
+
         if (replace) {
             history[history.length - 1] = p
         } else {
