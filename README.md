@@ -8,7 +8,7 @@
 
 ## What is RNTV?
 
-RNTV is a video streaming tv/mobile/desktop application. Stream video from your sources.
+RNTV is a video streaming tv/mobile application. Stream video from your sources.
 
 ## Table of Contents
 
@@ -31,8 +31,6 @@ Made with _[Lunacy](https://icons8.com/lunacy)_
 
 Make sure you have setup react native environment [here](https://reactnative.dev/docs/environment-setup)
 
-- [windows setup](https://microsoft.github.io/react-native-windows/docs/getting-started)
-
 Clone this repo
 
 ```bash
@@ -48,16 +46,8 @@ yarn
 
 ## Development
 
-For android
-
 ```
-yarn android
-```
-
-For windows
-
-```
-yarn windows
+yarn start
 ```
 
 ### Add your video sources
@@ -131,12 +121,6 @@ For android, find `app-release.apk` at [/android/app/build/outputs/apk/release](
 
 ```
 yarn build
-```
-
-For windows
-
-```
-yarn build:win
 ```
 
 ## License

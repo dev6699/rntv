@@ -281,7 +281,7 @@ export const useDownload = (props: { getVideoUrl: (url: string, provider: string
             .progress((completed, total) => {
                 // console.log('prog:', received, total)
                 if (singleUpdate) {
-                    setProgress(`${i18n.t('downloading')}... ${(completed / total * 100).toFixed(2)}%`)
+                    setProgress(`${i18n.t('downloading')}... ${(+completed / +total * 100).toFixed(2)}%`)
                 }
             })
 
