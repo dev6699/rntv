@@ -365,148 +365,150 @@ const DownloadList: React.FC<{
     } = useDownloadContext()
 
     return (
-        <FlatList
-            ListHeaderComponent={Settings}
-            ListEmptyComponent={NoDownload}
-            data={Object.entries(downloadList)}
-            contentContainerStyle={{ paddingBottom: 20 }}
-            renderItem={({ item }) => {
-                const [_, d] = item
-                const selected = selectedDelete[d.href]
-                return (
-                    <TouchableHighlight
-                        key={d.href}
-                        onPress={async () => {
-                            if (editMode) {
-                                if (selected) {
-                                    delete selectedDelete[d.href]
+        <View style={{ flex: 1 }}>
+            <FlatList
+                ListHeaderComponent={Settings}
+                ListEmptyComponent={NoDownload}
+                data={Object.entries(downloadList)}
+                contentContainerStyle={{ paddingBottom: 20 }}
+                renderItem={({ item }) => {
+                    const [_, d] = item
+                    const selected = selectedDelete[d.href]
+                    return (
+                        <TouchableHighlight
+                            key={d.href}
+                            onPress={async () => {
+                                if (editMode) {
+                                    if (selected) {
+                                        delete selectedDelete[d.href]
+                                    } else {
+                                        selectedDelete[d.href] = d
+                                    }
+                                    setSelectedDelete(JSON.parse(JSON.stringify(selectedDelete)))
+                                    return
+                                }
+
+                                if (!d.path) {
+                                    return
+                                }
+                                const exist = await checkDownloadExist(d)
+                                if (exist) {
+                                    playOfflineVideo(d.path, d.name + " " + d.ep)
                                 } else {
-                                    selectedDelete[d.href] = d
+                                    await markDownloadMissing(d)
                                 }
-                                setSelectedDelete(JSON.parse(JSON.stringify(selectedDelete)))
-                                return
-                            }
+                            }}
+                        >
+                            <View style={{
+                                paddingVertical: 20,
+                                borderBottomColor: theme.whiteA(0.2),
+                                borderBottomWidth: 1,
+                                flexDirection: 'row',
+                                alignItems: 'center',
+                                flex: 1,
+                            }}>
+                                <View style={{ flex: 1, flexDirection: 'row', alignItems: 'center' }}>
+                                    {editMode &&
+                                        <>
+                                            {selected ?
+                                                <Image
+                                                    style={{
+                                                        height: 24, width: 24,
+                                                    }}
+                                                    resizeMode='contain'
+                                                    source={imgAssets.checked}
+                                                />
+                                                :
+                                                <View
+                                                    style={{
+                                                        height: 24, width: 24,
+                                                        borderWidth: 1,
+                                                        borderColor: theme.whiteA(0.3),
+                                                        borderRadius: 999
+                                                    }}
+                                                />
+                                            }
+                                        </>
+                                    }
 
-                            if (!d.path) {
-                                return
-                            }
-                            const exist = await checkDownloadExist(d)
-                            if (exist) {
-                                playOfflineVideo(d.path, d.name + " " + d.ep)
-                            } else {
-                                await markDownloadMissing(d)
-                            }
-                        }}
-                    >
-                        <View style={{
-                            paddingVertical: 20,
-                            borderBottomColor: theme.whiteA(0.2),
-                            borderBottomWidth: 1,
-                            flexDirection: 'row',
-                            alignItems: 'center',
-                            flex: 1,
-                        }}>
-                            <View style={{ flex: 1, flexDirection: 'row', alignItems: 'center' }}>
-                                {editMode &&
-                                    <>
-                                        {selected ?
+                                    <Text
+                                        style={{
+                                            marginLeft: 10,
+                                            color: d.path ? theme.whiteA() : theme.whiteA(0.5)
+                                        }}>
+                                        {d.name + " " + d.ep}
+                                    </Text>
+                                </View>
+                                <View style={{ flex: 1, alignItems: 'flex-end' }}>
+                                    {
+
+                                        d.path ?
                                             <Image
-                                                style={{
-                                                    height: 24, width: 24,
-                                                }}
+                                                style={{ height: 24, width: 24 }}
                                                 resizeMode='contain'
-                                                source={imgAssets.checked}
+                                                source={imgAssets.ok}
                                             />
                                             :
-                                            <View
-                                                style={{
-                                                    height: 24, width: 24,
-                                                    borderWidth: 1,
-                                                    borderColor: theme.whiteA(0.3),
-                                                    borderRadius: 999
-                                                }}
-                                            />
-                                        }
-                                    </>
-                                }
-
-                                <Text
-                                    style={{
-                                        marginLeft: 10,
-                                        color: d.path ? theme.whiteA() : theme.whiteA(0.5)
-                                    }}>
-                                    {d.name + " " + d.ep}
-                                </Text>
-                            </View>
-                            <View style={{ flex: 1, alignItems: 'flex-end' }}>
-                                {
-
-                                    d.path ?
-                                        <Image
-                                            style={{ height: 24, width: 24 }}
-                                            resizeMode='contain'
-                                            source={imgAssets.ok}
-                                        />
-                                        :
-                                        d.href === downloading ?
-                                            <View style={{ flexDirection: 'row', alignItems: 'center' }}>
-                                                <Text style={{ color: theme.primary }}>
-                                                    {progress}
-                                                </Text>
-                                                <TouchableHighlight
-                                                    onPress={() => {
-                                                        if (editMode) {
-                                                            return
-                                                        }
-                                                        pauseDownload()
-                                                    }}
-                                                >
-                                                    <Image
-                                                        style={{
-                                                            marginLeft: 10,
-                                                            width: 28,
-                                                            height: 28,
+                                            d.href === downloading ?
+                                                <View style={{ flexDirection: 'row', alignItems: 'center' }}>
+                                                    <Text style={{ color: theme.primary }}>
+                                                        {progress}
+                                                    </Text>
+                                                    <TouchableHighlight
+                                                        onPress={() => {
+                                                            if (editMode) {
+                                                                return
+                                                            }
+                                                            pauseDownload()
                                                         }}
-                                                        resizeMode='contain'
-                                                        source={imgAssets.pause}
-                                                    />
-                                                </TouchableHighlight>
-                                            </View>
-                                            :
-                                            <View style={{
-                                                flexDirection: 'row',
-                                                justifyContent: 'flex-end',
-                                                alignItems: 'center'
-                                            }}>
-                                                <Text style={{ color: theme.whiteA(0.5) }}>
-                                                    {i18n.t('downloadPaused')}
-                                                </Text>
-                                                <TouchableHighlight
-                                                    onPress={() => {
-                                                        if (editMode || d.failed) {
-                                                            return
-                                                        }
-                                                        startDownload(d, true)
-                                                    }}
-                                                >
-                                                    <Image
-                                                        style={{
-                                                            marginLeft: 10,
-                                                            width: 28,
-                                                            height: 28,
+                                                    >
+                                                        <Image
+                                                            style={{
+                                                                marginLeft: 10,
+                                                                width: 28,
+                                                                height: 28,
+                                                            }}
+                                                            resizeMode='contain'
+                                                            source={imgAssets.pause}
+                                                        />
+                                                    </TouchableHighlight>
+                                                </View>
+                                                :
+                                                <View style={{
+                                                    flexDirection: 'row',
+                                                    justifyContent: 'flex-end',
+                                                    alignItems: 'center'
+                                                }}>
+                                                    <Text style={{ color: theme.whiteA(0.5) }}>
+                                                        {i18n.t('downloadPaused')}
+                                                    </Text>
+                                                    <TouchableHighlight
+                                                        onPress={() => {
+                                                            if (editMode || d.failed) {
+                                                                return
+                                                            }
+                                                            startDownload(d, true)
                                                         }}
-                                                        resizeMode='contain'
-                                                        source={d.failed ? imgAssets.error : imgAssets.downloadRound}
-                                                    />
-                                                </TouchableHighlight>
-                                            </View>
-                                }
+                                                    >
+                                                        <Image
+                                                            style={{
+                                                                marginLeft: 10,
+                                                                width: 28,
+                                                                height: 28,
+                                                            }}
+                                                            resizeMode='contain'
+                                                            source={d.failed ? imgAssets.error : imgAssets.downloadRound}
+                                                        />
+                                                    </TouchableHighlight>
+                                                </View>
+                                    }
+                                </View>
                             </View>
-                        </View>
-                    </TouchableHighlight>
-                )
-            }}
-        />
+                        </TouchableHighlight>
+                    )
+                }}
+            />
+        </View>
     )
 }
 
@@ -547,7 +549,8 @@ const StorageBar: React.FC<{
         <TouchableHighlight
             style={{
                 backgroundColor: theme.whiteA(0.2),
-                padding: 10
+                padding: 10,
+                marginTop: 'auto'
             }}
             onPress={onPress}
         >

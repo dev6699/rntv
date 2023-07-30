@@ -28,64 +28,66 @@ export const VideoList: React.FC<{
   }
 
   return (
-    <FlatList
-      ref={scrollRef}
-      data={videoGroup}
-      refreshControl={onRefresh ? <RefreshControl refreshing={refreshing} onRefresh={refresh} /> : undefined}
-      renderItem={({ item, index }) => {
-        const { title, href, videos } = item;
-        if (videos.length < 1) {
-          return null;
-        }
-        return (
-          <View
-            key={title + index}
-          >
+    <View style={{ flex: 1 }}>
+      <FlatList
+        ref={scrollRef}
+        data={videoGroup}
+        refreshControl={onRefresh ? <RefreshControl refreshing={refreshing} onRefresh={refresh} /> : undefined}
+        renderItem={({ item, index }) => {
+          const { title, href, videos } = item;
+          if (videos.length < 1) {
+            return null;
+          }
+          return (
             <View
-              style={{
-                flex: 1,
-                marginLeft: 10,
-                flexDirection: 'row',
-                alignItems: 'center',
-              }}>
-              <Text
-                numberOfLines={1}
+              key={title + index}
+            >
+              <View
                 style={{
                   flex: 1,
-                  fontSize: 20,
-                  color: theme.whiteA(),
-                  paddingBottom: 10
+                  marginLeft: 10,
+                  flexDirection: 'row',
+                  alignItems: 'center',
                 }}>
-                {title}
-              </Text>
-              {href ? (
-                <Button
-                  onPress={() => onMorePress(href, title)}
-                  text={i18n.t('more')}
+                <Text
+                  numberOfLines={1}
                   style={{
-                    marginLeft: 'auto',
-                  }}
-                />
-              ) : null}
-            </View>
-            <FlatList
-              key={numCols}
-              data={videos}
-              numColumns={numCols}
-              renderItem={({ item, index }) => {
-                return (
-                  <VideoCard
-                    style={{ flex: 1 / numCols }}
-                    video={item}
-                    key={item.title + index}
-                    onVideoPress={() => onVideoPress(item)}
+                    flex: 1,
+                    fontSize: 20,
+                    color: theme.whiteA(),
+                    paddingBottom: 10
+                  }}>
+                  {title}
+                </Text>
+                {href ? (
+                  <Button
+                    onPress={() => onMorePress(href, title)}
+                    text={i18n.t('more')}
+                    style={{
+                      marginLeft: 'auto',
+                    }}
                   />
-                );
-              }}
-            />
-          </View>
-        );
-      }}
-    />
+                ) : null}
+              </View>
+              <FlatList
+                key={numCols}
+                data={videos}
+                numColumns={numCols}
+                renderItem={({ item, index }) => {
+                  return (
+                    <VideoCard
+                      style={{ flex: 1 / numCols }}
+                      video={item}
+                      key={item.title + index}
+                      onVideoPress={() => onVideoPress(item)}
+                    />
+                  );
+                }}
+              />
+            </View>
+          );
+        }}
+      />
+    </View>
   );
 };
