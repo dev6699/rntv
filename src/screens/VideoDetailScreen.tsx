@@ -100,36 +100,36 @@ export const VideoDetailScreen: React.FC = () => {
         </View>
 
         <View style={{ flex: 5, flexDirection: isPortrait ? 'column' : 'row' }}>
-          <FlatList
-            horizontal={isPortrait}
-            key={'source' + orientation}
-            style={{
-              flex: 2,
-            }}
-            data={Object.entries(videoDetail.source)}
-            renderItem={({ item, index }) => {
-              const [s] = item;
-              const selected = source === s;
+          <View style={{ flex: 1, flexDirection: isPortrait ? 'row' : 'column' }}>
+            <FlatList
+              horizontal={isPortrait}
+              key={'source' + orientation}
+              data={Object.entries(videoDetail.source)}
+              renderItem={({ item, index }) => {
+                const [s] = item;
+                const selected = source === s;
 
-              return (
-                <Button
-                  text={s}
-                  key={s + index}
-                  style={{ backgroundColor: theme.transparent }}
-                  textStyle={{
-                    padding: 8,
-                    fontSize: 18,
-                    color: theme.whiteA(),
-                    borderBottomWidth: selected ? 3 : 0,
-                    borderColor: theme.primary,
-                  }}
-                  onPress={() => {
-                    setSource(s);
-                  }}
-                />
-              );
-            }}
-          />
+                return (
+                  <Button
+                    text={s}
+                    key={s + index}
+                    style={{ backgroundColor: theme.transparent }}
+                    textStyle={{
+                      padding: 8,
+                      fontSize: 18,
+                      color: theme.whiteA(),
+                      borderBottomWidth: selected ? 3 : 0,
+                      borderColor: theme.primary,
+                    }}
+                    onPress={() => {
+                      setSource(s);
+                    }}
+                  />
+                );
+              }}
+            />
+          </View>
+
           <View
             style={{
               flex: isPortrait ? 5 : 3,
@@ -161,78 +161,81 @@ export const VideoDetailScreen: React.FC = () => {
                 }}
               />
             </View>
-            <FlatList
-              key={'ep' + orientation}
-              numColumns={isPortrait ? 3 : 4}
-              data={episodes}
-              renderItem={({ item, index }) => {
-                return (
-                  <View style={{
-                    width: isPortrait ? '33%' : '25%',
-                  }}>
 
-                    <Button
-                      style={{
-                        paddingLeft: 15,
-                        alignItems: 'center',
-                        justifyContent: 'flex-start',
-                        display: 'flex'
-                      }}
-                      textStyle={{
-                        color: !downloadMode && item.watched ? theme.primary : theme.whiteA(),
-                      }}
-                      text={item.ep}
-                      key={item.href + index}
-                      onPress={() => {
-                        if (downloadMode) {
-                          if (selectedDownload.has(index)) {
-                            selectedDownload.delete(index)
+            <View style={{ flex: 1 }}>
+              <FlatList
+                key={'ep' + orientation}
+                numColumns={isPortrait ? 3 : 4}
+                data={episodes}
+                renderItem={({ item, index }) => {
+                  return (
+                    <View style={{
+                      width: isPortrait ? '33%' : '25%',
+                    }}>
+
+                      <Button
+                        style={{
+                          paddingLeft: 15,
+                          alignItems: 'center',
+                          justifyContent: 'flex-start',
+                          display: 'flex'
+                        }}
+                        textStyle={{
+                          color: !downloadMode && item.watched ? theme.primary : theme.whiteA(),
+                        }}
+                        text={item.ep}
+                        key={item.href + index}
+                        onPress={() => {
+                          if (downloadMode) {
+                            if (selectedDownload.has(index)) {
+                              selectedDownload.delete(index)
+                            } else {
+                              selectedDownload.add(index)
+                            }
+                            setSelectedDownload(new Set([...selectedDownload]))
                           } else {
-                            selectedDownload.add(index)
+                            playVideo({
+                              index,
+                              ep: item.ep,
+                              url: item.href,
+                              title: videoDetail.title,
+                              source,
+                              eps: episodes,
+                            })
                           }
-                          setSelectedDownload(new Set([...selectedDownload]))
-                        } else {
-                          playVideo({
-                            index,
-                            ep: item.ep,
-                            url: item.href,
-                            title: videoDetail.title,
-                            source,
-                            eps: episodes,
-                          })
+                        }}
+                        icon={
+                          downloadMode ?
+                            (
+                              selectedDownload.has(index) ?
+                                <Image
+                                  style={{
+                                    height: 20, width: 20,
+                                    marginRight: 10
+                                  }}
+                                  resizeMode='contain'
+                                  source={imgAssets.checked}
+                                />
+                                :
+                                <View
+                                  style={{
+                                    height: 20, width: 20,
+                                    marginRight: 10,
+                                    borderWidth: 1,
+                                    borderColor: theme.whiteA(0.3),
+                                    borderRadius: 999
+                                  }}
+                                />
+                            )
+                            :
+                            undefined
                         }
-                      }}
-                      icon={
-                        downloadMode ?
-                          (
-                            selectedDownload.has(index) ?
-                              <Image
-                                style={{
-                                  height: 20, width: 20,
-                                  marginRight: 10
-                                }}
-                                resizeMode='contain'
-                                source={imgAssets.checked}
-                              />
-                              :
-                              <View
-                                style={{
-                                  height: 20, width: 20,
-                                  marginRight: 10,
-                                  borderWidth: 1,
-                                  borderColor: theme.whiteA(0.3),
-                                  borderRadius: 999
-                                }}
-                              />
-                          )
-                          :
-                          undefined
-                      }
-                    />
-                  </View>
-                );
-              }}
-            />
+                      />
+                    </View>
+                  );
+                }}
+              />
+            </View>
           </View>
         </View>
 
