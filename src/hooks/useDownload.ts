@@ -245,18 +245,7 @@ export const useDownload = (props: { getVideoUrl: (url: string, provider: string
         }
 
         for (const f of files) {
-            if (decryptKey) {
-                // TODO: figure out why exoplayer cant play
-                // NOTE: playable on vlc player 
-                const base64 = await FS.readFile(f, 'base64')
-                const decrypted = decrypt(decryptKey, base64)
-                await FS.appendFile(outFile, FETCH_BLOB.base64.encode(Array(decrypted.length)
-                    .fill('')
-                    .map((_, i) => String.fromCharCode(decrypted[i]))
-                    .join('')), 'base64')
-            } else {
-                await FS.appendFile(outFile, f, 'uri')
-            }
+            await FS.appendFile(outFile, f, 'uri')
         }
 
         await FS.unlink(`${DOWNLOAD_DIR}/${dirname}/${videoname}`)
@@ -265,8 +254,9 @@ export const useDownload = (props: { getVideoUrl: (url: string, provider: string
         return outFile
     }
 
-    const downloadVideoFile: DownloadTaskHandler<string> = async (url, dirname, videoname, id, singleUpdate) => {
-        const path = DOWNLOAD_DIR + `/${dirname}/${videoname}/${id}${VIDEO_EXT}`
+    const downloadVideoFile = (decryptKey: string): DownloadTaskHandler<string> => async (url, dirname, videoname, id, singleUpdate) => {
+        const dir = DOWNLOAD_DIR + `/${dirname}/${videoname}`
+        const path = dir + `/${id}${VIDEO_EXT}`
         const exist = await FS.exists(path)
         if (exist) {
             return path
@@ -275,7 +265,8 @@ export const useDownload = (props: { getVideoUrl: (url: string, provider: string
         const task = FETCH_BLOB
             .config({
                 wifiOnly: true,
-                path,
+                // save to path directly when file is not encrypted
+                path: !decryptKey ? path : undefined,
             })
             .fetch("GET", url)
             .progress((completed, total) => {
@@ -286,9 +277,22 @@ export const useDownload = (props: { getVideoUrl: (url: string, provider: string
             })
 
         tasksRef.current[id] = task
-        return task.then((res) => {
-            tasksRef.current[id] = null
-            return res.path()
+        return task.then(async (res) => {
+            if (decryptKey) {
+                // decrypt and save the decrypted content to file
+                const decrypted = decrypt(decryptKey, res.base64())
+                try {
+                    // avoid directory not exists error
+                    await FS.mkdir(dir)
+                } catch { }
+                return FS.createFile(path, decrypted, 'base64').then(() => {
+                    tasksRef.current[id] = null
+                    return path
+                })
+            } else {
+                tasksRef.current[id] = null
+                return res.path()
+            }
         })
     }
 
@@ -319,20 +323,20 @@ export const useDownload = (props: { getVideoUrl: (url: string, provider: string
                 return
             }
             const [videoChunks, decryptKey] = await loadVideoChunks(vidUrl)
-            // if (videoChunks.length === 0) {
-            if (videoChunks.length === 0 || decryptKey) {
-                // failed to get chunks, probably some weird extension or aes encrypted
+            if (videoChunks.length === 0) {
+                // failed to get chunks, probably some weird extension
                 downloadFailed(d)
                 return
             }
 
             const videoName = `${d.name} ${d.ep}`
 
+            const downloadTaskHandler = downloadVideoFile(decryptKey)
             const files = await startTasks(
                 d.name,
                 videoName,
                 videoChunks,
-                downloadVideoFile,
+                downloadTaskHandler,
                 (completed, total) => {
                     setProgress(`${i18n.t('downloading')}... ${(completed / total * 100).toFixed(2)}%`)
                     // console.log("Progress: ", videoName, (completed / total * 100).toFixed(2))

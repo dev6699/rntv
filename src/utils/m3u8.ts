@@ -15,7 +15,7 @@ export const loadVideoChunks = async (url: string): Promise<[string[], string]> 
 
     if ((res.data as string).includes('m3u8')) {
         const lines: string[] = res.data.split('\n')
-        let m3u8 = lines.find(l => l.includes('m3u8'))
+        let m3u8 = lines.find(l => l.includes('m3u8'))!
 
         if (!(m3u8!.startsWith('http://') || m3u8!.startsWith('https://'))) {
             const urlParts = url.split('/')
@@ -28,8 +28,8 @@ export const loadVideoChunks = async (url: string): Promise<[string[], string]> 
                 m3u8 = hostname + m3u8
             }
 
-            return loadVideoChunks(m3u8)
         }
+        return loadVideoChunks(m3u8)
     }
 
     const lines: string[] = res.data.split('\n')
@@ -41,21 +41,24 @@ export const loadVideoChunks = async (url: string): Promise<[string[], string]> 
     const vidUrl = urlParts.join('/')
     for (const line of lines) {
         if (line.startsWith('#EXT-X-KEY')) {
-            key = 'encrypted'
-            break
-            // TODO? handle stream with encryption
-            // tested slow performance running decryption in JS, find a native solution?
-
             let keyUrl = line.split('URI="')[1]
-            keyUrl = keyUrl.substring(0, keyUrl.length - 1)
+            keyUrl = keyUrl.split('"')[0]
+
             if (!(keyUrl!.startsWith('http://') || keyUrl!.startsWith('https://'))) {
                 const urlParts = url.split('/')
                 const hostname = urlParts[0] + "//" + urlParts[2]
-                keyUrl = hostname + keyUrl
+                if (keyUrl.startsWith('/')) {
+                    keyUrl = hostname + keyUrl
+                } else {
+                    urlParts.pop()
+                    const baseUrl = urlParts.join('/')
+                    keyUrl = baseUrl + '/' + keyUrl
+                }
             }
             const res = await axios.get(keyUrl)
             key = res.data
         }
+
         if (
             line.endsWith(VIDEO_EXT) ||
             line.includes(VIDEO_EXT + "?") ||
@@ -88,8 +91,16 @@ export const loadVideoChunks = async (url: string): Promise<[string[], string]> 
     return [files, key]
 }
 
+// decrypt aes-128
 export const decrypt = (secret: string, encryptedBytes: string) => {
-    const secretBuf = Buffer.from(secret)
-    const aesCbc = new aesjs.ModeOfOperation.cbc(secretBuf, secretBuf);
-    return aesCbc.decrypt(Buffer.from(encryptedBytes, 'base64'))
+    const secretKey = secret; // 128-bit key (16 bytes)
+    const iv = new Uint8Array(16); // 16-byte IV
+
+    const aesCbc = new aesjs.ModeOfOperation.cbc(
+        Buffer.from(secretKey),
+        iv
+    );
+
+    const decryptedBytes = aesCbc.decrypt(new Uint8Array(Buffer.from(encryptedBytes, 'base64')));
+    return Buffer.from(decryptedBytes).toString('base64')
 }

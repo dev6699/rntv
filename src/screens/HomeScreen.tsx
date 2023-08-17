@@ -45,11 +45,13 @@ export const HomeScreen: React.FC<{
             }}>
             <VideoSearch searchVideo={actions.searchVideo} />
           </View>
-          <VideoProvider
-            activeProvider={state.provider}
-            providers={state.providers}
-            setProvider={actions.setProvider}
-          />
+          <View style={{ flex: 1, flexDirection: 'row' }}>
+            <VideoProvider
+              activeProvider={state.provider}
+              providers={state.providers}
+              setProvider={actions.setProvider}
+            />
+          </View>
         </View>
       </View>
 
