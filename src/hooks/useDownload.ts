@@ -4,7 +4,7 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import RNFetchBlob, { FetchBlobResponse, StatefulPromise } from "react-native-blob-util";
 
 import { i18n } from "../../i18n";
-import { VIDEO_EXT, decrypt, loadVideoChunks } from '../utils/m3u8'
+import { Enc, VIDEO_EXT, decrypt, loadVideoChunks } from '../utils/m3u8'
 
 type DownloadTaskHandler<T> = (item: string, taskGroupName: string, taskName: string, id: number, singleUpdate: boolean) => Promise<T>
 
@@ -234,7 +234,7 @@ export const useDownload = (props: { getVideoUrl: (url: string, provider: string
         return results
     };
 
-    const mergeFiles = async (dirname: string, videoname: string, files: string[], decryptKey: string) => {
+    const mergeFiles = async (dirname: string, videoname: string, files: string[]) => {
         console.log('merging...')
         setProgress(i18n.t('processingFiles') + '...')
 
@@ -254,7 +254,7 @@ export const useDownload = (props: { getVideoUrl: (url: string, provider: string
         return outFile
     }
 
-    const downloadVideoFile = (decryptKey: string): DownloadTaskHandler<string> => async (url, dirname, videoname, id, singleUpdate) => {
+    const downloadVideoFile = (enc: Enc): DownloadTaskHandler<string> => async (url, dirname, videoname, id, singleUpdate) => {
         const dir = DOWNLOAD_DIR + `/${dirname}/${videoname}`
         const path = dir + `/${id}${VIDEO_EXT}`
         const exist = await FS.exists(path)
@@ -266,7 +266,7 @@ export const useDownload = (props: { getVideoUrl: (url: string, provider: string
             .config({
                 wifiOnly: true,
                 // save to path directly when file is not encrypted
-                path: !decryptKey ? path : undefined,
+                path: !enc ? path : undefined,
             })
             .fetch("GET", url)
             .progress((completed, total) => {
@@ -278,9 +278,9 @@ export const useDownload = (props: { getVideoUrl: (url: string, provider: string
 
         tasksRef.current[id] = task
         return task.then(async (res) => {
-            if (decryptKey) {
+            if (enc) {
                 // decrypt and save the decrypted content to file
-                const decrypted = decrypt(decryptKey, res.base64())
+                const decrypted = decrypt(enc, res.base64())
                 try {
                     // avoid directory not exists error
                     await FS.mkdir(dir)
@@ -322,7 +322,7 @@ export const useDownload = (props: { getVideoUrl: (url: string, provider: string
                 downloadFailed(d)
                 return
             }
-            const [videoChunks, decryptKey] = await loadVideoChunks(vidUrl)
+            const [videoChunks, enc] = await loadVideoChunks(vidUrl)
             if (videoChunks.length === 0) {
                 // failed to get chunks, probably some weird extension
                 downloadFailed(d)
@@ -331,7 +331,7 @@ export const useDownload = (props: { getVideoUrl: (url: string, provider: string
 
             const videoName = `${d.name} ${d.ep}`
 
-            const downloadTaskHandler = downloadVideoFile(decryptKey)
+            const downloadTaskHandler = downloadVideoFile(enc)
             const files = await startTasks(
                 d.name,
                 videoName,
@@ -348,7 +348,7 @@ export const useDownload = (props: { getVideoUrl: (url: string, provider: string
                 return
             }
 
-            const path = await mergeFiles(d.name, videoName, files, decryptKey)
+            const path = await mergeFiles(d.name, videoName, files)
             d.path = path
             await updateStorage()
             setDownloading('')

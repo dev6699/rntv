@@ -6,9 +6,11 @@ export const VIDEO_EXT = '.ts'
 const PNG_EXT = '.png'
 const BMP_EXT = '.bmp'
 
-export const loadVideoChunks = async (url: string): Promise<[string[], string]> => {
+export type Enc = { key: string, iv: string } | null
+
+export const loadVideoChunks = async (url: string): Promise<[string[], Enc]> => {
     if (!url.includes('.m3u8')) {
-        return [[url], '']
+        return [[url], null]
     }
 
     const res = await axios.get(url)
@@ -34,13 +36,20 @@ export const loadVideoChunks = async (url: string): Promise<[string[], string]> 
 
     const lines: string[] = res.data.split('\n')
 
-    let key = ''
+    let enc: Enc = null
     const files: string[] = []
     const urlParts = url.split('/')
     urlParts.splice(urlParts.length - 1)
     const vidUrl = urlParts.join('/')
     for (const line of lines) {
         if (line.startsWith('#EXT-X-KEY')) {
+            let iv = '0x00000000000000000000000000000000'
+            const ivRegex = /IV=([^,]+)/;
+            const ivMatch = line.match(ivRegex);
+            if (ivMatch) {
+                iv = ivMatch[1]
+            }
+
             let keyUrl = line.split('URI="')[1]
             keyUrl = keyUrl.split('"')[0]
 
@@ -55,8 +64,13 @@ export const loadVideoChunks = async (url: string): Promise<[string[], string]> 
                     keyUrl = baseUrl + '/' + keyUrl
                 }
             }
-            const res = await axios.get(keyUrl)
-            key = res.data
+            const res = await axios.get(keyUrl, {
+                responseType: 'arraybuffer'
+            })
+            enc = {
+                key: res.data,
+                iv
+            }
         }
 
         if (
@@ -88,17 +102,17 @@ export const loadVideoChunks = async (url: string): Promise<[string[], string]> 
             }
         }
     }
-    return [files, key]
+    return [files, enc]
 }
 
 // decrypt aes-128
-export const decrypt = (secret: string, encryptedBytes: string) => {
-    const secretKey = secret; // 128-bit key (16 bytes)
-    const iv = new Uint8Array(16); // 16-byte IV
+export const decrypt = (enc: Enc, encryptedBytes: string) => {
+    const secretKey = enc!.key; // 128-bit key (16 bytes)
+    const byteBuffer = Buffer.from(enc!.iv.slice(2), 'hex');
 
     const aesCbc = new aesjs.ModeOfOperation.cbc(
         Buffer.from(secretKey),
-        iv
+        new Uint8Array(byteBuffer)
     );
 
     const decryptedBytes = aesCbc.decrypt(new Uint8Array(Buffer.from(encryptedBytes, 'base64')));
