@@ -8,7 +8,8 @@
     "test": "jest",
     "lint": "eslint . --ext .js,.jsx,.ts,.tsx",
     "build": "cd android && ./gradlew assembleRelease",
-    "build:web": "expo export:web && sed -i 's#/static#static#g' web-build/index.html"
+    "build:web": "expo export:web && sed -i 's#/static#static#g' web-build/index.html",
+    "build:desktop": "yarn build:web && rm -r desktop/web-build && mv web-build desktop/web-build && cd desktop && yarn package"
   },
   "dependencies": {
     "@expo/webpack-config": "^19.0.0",
