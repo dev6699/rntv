@@ -21,7 +21,7 @@ export const BackButton: React.FC = () => {
         justifyContent: 'center',
         alignSelf: 'flex-start',
       }}>
-      <Image source={imgAssets.back} />
+      <Image source={imgAssets.back} style={{ height: 24, width: 24 }} />
     </TouchableHighlight>
   );
 };

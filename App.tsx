@@ -31,7 +31,7 @@ const App = () => {
               flex: 1,
               backgroundColor: theme.blackA(),
             }}>
-            {error && <Error text={error} />}
+            {error !== '' && <Error text={error} />}
             <Screen />
           </SafeAreaView>
         </NavContext.Provider>

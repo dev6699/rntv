@@ -1,5 +1,5 @@
 import React from 'react';
-import { View } from 'react-native';
+import { Platform, View } from 'react-native';
 
 import { VideoPlayerContext, useVideoPlayer } from './useVideoPlayer';
 
@@ -31,12 +31,17 @@ export const VideoPlayer: React.FC<{
           justifyContent: 'space-between',
         }}>
         <Video uri={url} />
-        {controlsShown && (
+        {(controlsShown || Platform.OS === 'web') && (
           <TopBar title={title} playNext={playNext} hasNext={hasNext} />
         )}
-        {controlsShown && <ControlBar />}
-        {error && <Error />}
-        {loading && <Loader />}
+
+        {Platform.OS !== 'web' &&
+          <>
+            {controlsShown && <ControlBar />}
+            {error && <Error />}
+            {loading && <Loader />}
+          </>
+        }
       </View>
     </VideoPlayerContext.Provider>
   );

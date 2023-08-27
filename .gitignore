@@ -67,3 +67,7 @@ src/services/tv/*
 !src/services/tv/index.ts
 !src/services/tv/types.ts
 !src/services/tv/sample.ts
+
+# expo web
+.expo
+web-build

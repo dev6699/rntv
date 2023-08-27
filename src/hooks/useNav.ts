@@ -1,6 +1,6 @@
 import React, { useRef } from "react";
 import { useEffect, useState } from "react";
-import { Alert, BackHandler } from "react-native";
+import { Alert, Platform, BackHandler as RNBackHandler } from "react-native";
 
 import { i18n } from '../../i18n';
 
@@ -9,6 +9,12 @@ export const NavContext = React.createContext<TNavContext>({} as TNavContext);
 export const useNavContext = () => React.useContext(NavContext);
 
 type TPage = 'home' | 'library' | 'category' | 'list' | 'detail' | 'play'
+
+// no-op for web
+const BackHandler = Platform.OS === 'web' ? {
+    addEventListener: () => ({ remove: () => { } }),
+    exitApp: () => { }
+} : RNBackHandler
 
 export const useNav = () => {
     const [page, _setPage] = useState<TPage>('home');
