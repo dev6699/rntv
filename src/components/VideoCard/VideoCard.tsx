@@ -109,7 +109,7 @@ export const VideoCard: React.FC<{
               resizeMode={'cover'}
               source={img ? { uri: img } : imgAssets.notFound}
               style={{
-                height: '100%',
+                height: cardHeight * 0.8,
                 width: '100%',
               }}
             />

@@ -66,7 +66,8 @@ export const VideoDetailScreen: React.FC = () => {
       style={{
         marginVertical: 2,
         flex: 1,
-        position: 'relative'
+        position: 'relative',
+        overflow: 'hidden'
       }}
     >
       <View

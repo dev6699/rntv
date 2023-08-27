@@ -37,7 +37,7 @@ export const Screen = () => {
       {page === 'home' || page === 'library' ? (
         <>
           {page === 'home' ? <HomeScreen scrollRef={scrollRef} /> : <LibraryScreen />}
-          {!Platform.isTV && <BottomNavigation scrollRef={scrollRef} />}
+          {(!Platform.isTV && Platform.OS !== 'web') && <BottomNavigation scrollRef={scrollRef} />}
         </>
       ) : page === 'category' ? (
         <VideoCategoryScreen />
