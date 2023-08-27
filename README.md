@@ -8,13 +8,20 @@
 
 ## What is RNTV?
 
-RNTV is a video streaming tv/mobile application. Stream video from your sources.
+RNTV is a video streaming application. Stream video from your sources.
+
+#### Platform Support
+
+| Android | Web | Linux | Windows | iOS | MacOS |
+| :-----: | :-: | :---: | :-----: | :-: | :---: |
+|   ✅    | ✅  |  ✅   |   ❓    | ❓  |  ❓   |
 
 ## Table of Contents
 
 - [What is RNTV?](#what-is-rntv)
 - [Table of Contents](#table-of-contents)
 - [Flow](#flow)
+- [Main Features](#main-features)
 - [Installation](#installation)
 - [Development](#development)
 - [Add your video sources](#add-your-video-sources)
@@ -26,6 +33,15 @@ RNTV is a video streaming tv/mobile application. Stream video from your sources.
 Made with _[Lunacy](https://icons8.com/lunacy)_
 
 <img src="./docs/flow.png" width="100%" height="100%">
+
+## Main Features
+
+- HLS Streaming 🌐
+- Video Download with AES-128 Encrypted Stream Support 🔒
+- Android TV Remote Control Support 📺
+- Internationalization: English and Chinese 🌍
+- Save Favorite Videos ❤️
+- Simple and Clean UI with No Ads 📱
 
 ## Installation
 
@@ -46,9 +62,15 @@ yarn
 
 ## Development
 
-```
-yarn start
-```
+1. For android
+   ```
+   yarn start
+   ```
+2. For web,
+   ```
+   yarn web
+   ```
+   Open your web browser and go to http://localhost:19006 to access the application.
 
 ### Add your video sources
 
@@ -117,11 +139,19 @@ yarn start
 
 ## Release build
 
-For android, find `app-release.apk` at [/android/app/build/outputs/apk/release](/android/app/build/outputs/apk/release)
+1. For android, find `app-release.apk` at [/android/app/build/outputs/apk/release](/android/app/build/outputs/apk/release)
 
-```
-yarn build
-```
+   ```
+   yarn build
+   ```
+
+2. For desktop, find output at [/desktop/out/rntv-desktop-linux-x64/rntv-desktop](/desktop/out/rntv-desktop-linux-x64/rntv-desktop)
+
+   For more information on how the output may vary depending on your environment, please refer to https://www.electronforge.io/cli.
+
+   ```
+   yarn build:desktop
+   ```
 
 ## License
 
