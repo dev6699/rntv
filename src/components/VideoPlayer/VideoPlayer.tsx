@@ -37,7 +37,7 @@ export const VideoPlayer: React.FC<{
 
         {Platform.OS !== 'web' &&
           <>
-            {controlsShown && <ControlBar />}
+            <ControlBar />
             {error && <Error />}
             {loading && <Loader />}
           </>

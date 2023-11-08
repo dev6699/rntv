@@ -140,7 +140,7 @@ export const VideoCard: React.FC<{
             numberOfLines={1}
             style={{
               color: theme.whiteA(),
-              fontSize: 16,
+              fontSize: 14,
             }}>
             {title}
           </Text>
