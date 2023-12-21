@@ -1,4 +1,3 @@
-import { PermissionsAndroid } from "react-native";
 import React, { useEffect, useReducer, useRef, useState } from "react";
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import RNFetchBlob, { FetchBlobResponse, StatefulPromise } from "react-native-blob-util";
@@ -372,24 +371,6 @@ export const useDownload = (props: { getVideoUrl: (url: string, provider: string
     const addDownloads = async (downloads: Download[]) => {
         if (downloads.length === 0) {
             return
-        }
-
-        const granted = await PermissionsAndroid.request(
-            PermissionsAndroid.PERMISSIONS.WRITE_EXTERNAL_STORAGE,
-            {
-                title: 'RNTV Files Permission',
-                message:
-                    'RNTV needs access to your photos and media ' +
-                    'in order for you to download videos for offline usage.',
-                buttonNeutral: 'Ask Me Later',
-                buttonNegative: 'Cancel',
-                buttonPositive: 'OK',
-            },
-        );
-
-        if (granted !== PermissionsAndroid.RESULTS.GRANTED) {
-            // TODO handle permission never ask
-            return false
         }
 
         const incomingDownloadList: DownloadList = {}
