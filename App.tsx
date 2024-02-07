@@ -1,4 +1,3 @@
-import 'react-native/tvos-types.d';
 import React, { useEffect } from 'react';
 import { SafeAreaView, View, Text } from 'react-native';
 
