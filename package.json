@@ -13,7 +13,7 @@
   },
   "dependencies": {
     "@expo/webpack-config": "^19.0.1",
-    "@react-native-async-storage/async-storage": "^1.21.0",
+    "@react-native-async-storage/async-storage": "^1.23.1",
     "aes-js": "^3.1.2",
     "axios": "^1.6.7",
     "buffer": "^6.0.3",
@@ -23,9 +23,10 @@
     "i18n-js": "^4.3.0",
     "react": "18.2.0",
     "react-dom": "18.2.0",
-    "react-native": "npm:react-native-tvos@0.73.2-0",
+    "react-native": "npm:react-native-tvos@0.74.1-0",
     "react-native-blob-util": "^0.19.6",
-    "react-native-video": "6.0.0-beta.5",
+    "react-native-tvos": "0.74.1-0",
+    "react-native-video": "6.1.2",
     "react-native-web": "~0.19.9",
     "video.js": "^8.5.2"
   },
@@ -33,10 +34,10 @@
     "@babel/core": "^7.20.0",
     "@babel/preset-env": "^7.20.0",
     "@babel/runtime": "^7.20.0",
-    "@react-native/babel-preset": "0.73.19",
-    "@react-native/eslint-config": "0.73.2",
-    "@react-native/metro-config": "0.73.3",
-    "@react-native/typescript-config": "0.73.1",
+    "@react-native/babel-preset": "0.74.83",
+    "@react-native/eslint-config": "0.74.83",
+    "@react-native/metro-config": "0.74.83",
+    "@react-native/typescript-config": "0.74.83",
     "@types/aes-js": "^3.1.1",
     "@types/crypto-js": "^4.2.1",
     "@types/jest": "^29.2.1",
@@ -62,5 +63,6 @@
   },
   "engines": {
     "node": ">=18"
-  }
+  },
+  "packageManager": "yarn@4.2.2"
 }
