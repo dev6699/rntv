@@ -37,7 +37,9 @@ type Translation = {
     connecting: string
     downloading: string
     home: string
+    web: string
     library: string
+    loadMedia: string
 }
 
 const en: Translation = {
@@ -73,7 +75,9 @@ const en: Translation = {
     connecting: 'Connecting',
     downloading: 'Downloading',
     home: 'Home',
-    library: 'Library'
+    web: 'Web',
+    library: 'Library',
+    loadMedia: 'Load Media'
 };
 
 const zh: Translation = {
@@ -109,7 +113,9 @@ const zh: Translation = {
     connecting: '连接中',
     downloading: '下载中',
     home: '主页',
-    library: '媒体库'
+    web: '游览器',
+    library: '媒体库',
+    loadMedia: '加载媒体'
 };
 
 export const i18n = new I18n({

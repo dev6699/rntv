@@ -5,6 +5,7 @@ export type RootStackParamList = {
 
     Home: undefined
     Library: undefined
+    Web: undefined
 
     Category: { path: string, name: string }
     List: { path: string, name: string }

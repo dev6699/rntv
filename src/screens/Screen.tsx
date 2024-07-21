@@ -8,6 +8,7 @@ import { i18n } from '../../i18n';
 import { imgAssets, theme } from '../utils';
 import { RootStackParamList } from './types';
 
+import { WebScreen } from './WebScreen';
 import { HomeScreen } from './HomeScreen';
 import { LibraryScreen } from './LibraryScreen';
 import { VideoListScreen } from './VideoListScreen';
@@ -67,6 +68,11 @@ function Tabs() {
                 source={focused ? imgAssets.homeFill : imgAssets.homeLine} />
             )
           }
+          if (route.name === 'Web') {
+            return (
+              <Text style={{ fontSize: 20 }}>🌐</Text>
+            )
+          }
           return (
             <Image
               style={{ height: 24 }}
@@ -79,6 +85,7 @@ function Tabs() {
       })}
     >
       <Tab.Screen name="Home" component={HomeScreen} />
+      <Tab.Screen name="Web" component={WebScreen} />
       <Tab.Screen name="Library" component={LibraryScreen} />
     </Tab.Navigator>
   );

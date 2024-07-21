@@ -6,7 +6,7 @@ export const VIDEO_EXT = '.ts'
 const PNG_EXT = '.png'
 const BMP_EXT = '.bmp'
 
-export type Enc = { key: string, iv: string } | null
+export type Enc = { key: Buffer, iv: string } | null
 
 export const loadVideoChunks = async (url: string): Promise<[string[], Enc]> => {
     if (!url.includes('.m3u8')) {
@@ -68,7 +68,7 @@ export const loadVideoChunks = async (url: string): Promise<[string[], Enc]> => 
                 responseType: 'arraybuffer'
             })
             enc = {
-                key: res.data,
+                key: Buffer.from(res.data),
                 iv
             }
         }
@@ -111,7 +111,7 @@ export const decrypt = (enc: Enc, encryptedBytes: string) => {
     const byteBuffer = Buffer.from(enc!.iv.slice(2), 'hex');
 
     const aesCbc = new aesjs.ModeOfOperation.cbc(
-        Buffer.from(secretKey),
+        secretKey,
         new Uint8Array(byteBuffer)
     );
 
