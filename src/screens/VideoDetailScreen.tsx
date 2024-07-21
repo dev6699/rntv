@@ -1,12 +1,15 @@
 import React, { useEffect, useRef, useState } from 'react';
 import { Animated, Easing, FlatList, Image, Text, TouchableHighlight, View } from 'react-native';
+import { NativeStackScreenProps } from '@react-navigation/native-stack';
+
 import { i18n } from '../../i18n';
 
 import { imgAssets, theme } from '../utils';
-import { Button, BackButton, DownloadButton } from '../components';
-
+import { RootStackParamList } from './types';
+import { TVideoWithSource } from '../services';
 import { Download } from '../hooks/useDownload';
-import { useDownloadContext, useNavContext, useOrientation, useVideoContext } from '../hooks';
+import { Button, BackButton, DownloadButton } from '../components';
+import { useDownloadContext, useOrientation, useVideoContext } from '../hooks';
 
 type VideoWatch = {
   href: string;
@@ -14,31 +17,62 @@ type VideoWatch = {
   watched: boolean;
 };
 
-export const VideoDetailScreen: React.FC = () => {
+type Props = NativeStackScreenProps<RootStackParamList, 'Detail'>;
+
+export const VideoDetailScreen = ({ navigation, route }: Props) => {
   const {
-    state: { videoDetail, provider },
+    state: { provider, loading },
     actions: {
+      getVideoDetail,
       watchedKey,
       getWatched,
-      playVideo,
       saveFavourite,
       isFavourite,
       removeFavourite,
     },
   } = useVideoContext();
   const { actions: { addDownloads } } = useDownloadContext()
-  const { setPage } = useNavContext()
   const { isPortrait, orientation, height } = useOrientation();
 
-  const [source, setSource] = useState(Object.keys(videoDetail.source)[0]);
+  const [source, setSource] = useState('');
   const [episodes, setEpisodes] = useState<VideoWatch[]>([]);
   const [downloadMode, setDownloadMode] = useState(false)
   const [selectedDownload, setSelectedDownload] = useState(new Set<number>([]))
 
+  const [videoDetail, setVideoDetail] = useState({ ...route.params.video, source: {} } as TVideoWithSource);
+
+  useEffect(() => {
+    const { video } = route.params
+    getVideoDetail(video).
+      then((v) => {
+        setVideoDetail(v)
+        const keys = Object.keys(v.source)
+        if (keys.length > 0) {
+          selectSource(v, keys[0])
+        }
+      })
+  }, [route.params])
+
+  useEffect(() => {
+    const unsubscribe = navigation.addListener('focus', () => {
+      selectSource(videoDetail, source)
+    });
+
+    return unsubscribe;
+  }, [navigation, source, videoDetail]);
+
+  const selectSource = async (videoDetail: TVideoWithSource, s: string) => {
+    setSource(s)
+    const newEpisodes = videoDetail.source[s] as VideoWatch[];
+    const key = watchedKey(videoDetail.title, s);
+    await getWatched(key, newEpisodes);
+    setEpisodes(newEpisodes);
+    setSelectedDownload(new Set([]))
+  }
+
   const animations = useRef({
     bottom: new Animated.Value(-height * 0.2),
   }).current;
-
 
   const isFav = isFavourite(videoDetail);
 
@@ -49,17 +83,6 @@ export const VideoDetailScreen: React.FC = () => {
       await saveFavourite(videoDetail);
     }
   };
-
-  useEffect(() => {
-    (async () => {
-      const newEpisodes = videoDetail.source[source] as VideoWatch[];
-      const key = watchedKey(videoDetail.title, source);
-      await getWatched(key, newEpisodes);
-      setEpisodes(newEpisodes);
-    })();
-    setSelectedDownload(new Set([]))
-  }, [source]);
-
 
   return (
     <View
@@ -90,14 +113,17 @@ export const VideoDetailScreen: React.FC = () => {
             alignItems: 'center',
             backgroundColor: 'transparent'
           }}>
-          <BackButton />
-          <DownloadButton
-            active={downloadMode}
-            onPress={() => {
-              setSelectedDownload(new Set())
-              setDownloadMode(mode => !mode)
-            }}
-          />
+          <BackButton onPress={navigation.goBack} />
+          {
+            !loading &&
+            <DownloadButton
+              active={downloadMode}
+              onPress={() => {
+                setSelectedDownload(new Set())
+                setDownloadMode(mode => !mode)
+              }}
+            />
+          }
         </View>
 
         <View style={{ flex: 5, flexDirection: isPortrait ? 'column' : 'row' }}>
@@ -123,7 +149,7 @@ export const VideoDetailScreen: React.FC = () => {
                       borderColor: theme.primary,
                     }}
                     onPress={() => {
-                      setSource(s);
+                      selectSource(videoDetail, s);
                     }}
                   />
                 );
@@ -186,7 +212,7 @@ export const VideoDetailScreen: React.FC = () => {
                         }}
                         text={item.ep}
                         key={item.href + index}
-                        onPress={() => {
+                        onPress={async () => {
                           if (downloadMode) {
                             if (selectedDownload.has(index)) {
                               selectedDownload.delete(index)
@@ -195,13 +221,16 @@ export const VideoDetailScreen: React.FC = () => {
                             }
                             setSelectedDownload(new Set([...selectedDownload]))
                           } else {
-                            playVideo({
-                              index,
-                              ep: item.ep,
-                              url: item.href,
-                              title: videoDetail.title,
-                              source,
-                              eps: episodes,
+                            navigation.navigate('Play', {
+                              local: false,
+                              video: {
+                                index,
+                                ep: item.ep,
+                                url: item.href,
+                                title: videoDetail.title,
+                                source,
+                                eps: episodes,
+                              }
                             })
                           }
                         }}
@@ -373,7 +402,7 @@ export const VideoDetailScreen: React.FC = () => {
         <Text style={{ color: theme.blackA() }}>{i18n.t('downloading')}...</Text>
         <Button
           onPress={() => {
-            setPage('library')
+            navigation.navigate("Library")
           }}
           textStyle={{
             color: theme.primary

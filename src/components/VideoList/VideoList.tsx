@@ -35,7 +35,7 @@ export const VideoList: React.FC<{
         refreshControl={onRefresh ? <RefreshControl refreshing={refreshing} onRefresh={refresh} /> : undefined}
         renderItem={({ item, index }) => {
           const { title, href, videos } = item;
-          if (videos.length < 1) {
+          if (videos.length < 1 && !href) {
             return null;
           }
           return (

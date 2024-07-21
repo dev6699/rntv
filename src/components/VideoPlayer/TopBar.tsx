@@ -11,7 +11,8 @@ export const TopBar: React.FC<{
   title: string;
   hasNext: boolean;
   playNext(): void;
-}> = ({ title, hasNext, playNext }) => {
+  onBack(): void;
+}> = ({ title, hasNext, playNext, onBack }) => {
   const {
     refs: { animationsRef },
   } = useVideoPlayerContext();
@@ -30,7 +31,7 @@ export const TopBar: React.FC<{
         flexDirection: 'row',
         alignItems: 'center',
       }}>
-      <BackButton />
+      <BackButton onPress={onBack} />
       <Text
         style={{
           fontSize: 20,

@@ -12,9 +12,9 @@ RNTV is a video streaming application. Stream video from your sources.
 
 #### Platform Support
 
-| Android | Web | Linux | Windows | iOS | MacOS |
-| :-----: | :-: | :---: | :-----: | :-: | :---: |
-|   ✅    | ✅  |  ✅   |   ❓    | ❓  |  ❓   |
+| Android | Web | Linux | Windows | MacOS | IOS |
+| :-----: | :-: | :---: | :-----: | :---: | :-: |
+|   ✅    | ✅  |  ✅   |   ✅    |   ✅  |  ❓ |
 
 ## Table of Contents
 
@@ -91,11 +91,12 @@ yarn
       */
      getVideoCategory(path: string): Promise<TVideosRec[]>;
 
-     /**
-      * Called when `more` button is clicked on category screen
+      /**
+      * Called when reached the end of category screen
       * @param path url to the video category list
+      * @param page next page to load
       */
-     getVideoCategoryList(path: string): Promise<TVideosRec[]>;
+      getVideoCategoryMore(path: string, page: number): Promise<TVideosRec>
 
      /**
       * Called when video card is clicked

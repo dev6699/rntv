@@ -1,32 +1,20 @@
 import React, { useEffect, useState } from "react";
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
-import type { TNavContext } from "./useNav";
-import { TVideo, TVideosRec, TVideoWithSource, TVService, TVideoProvider } from "../services";
+import { TVideo, TVideosRec, TVideoWithSource, TVService, TVideoProvider, TVideoPlay } from "../services";
 
 export type TVideoContext = ReturnType<typeof useVideo>
 export const VideoContext = React.createContext<TVideoContext>({} as TVideoContext);
 export const useVideoContext = () => React.useContext(VideoContext);
 
-export const useVideo = (nav: TNavContext) => {
+export const useVideo = () => {
     const [init, setInit] = useState(false)
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState('');
-
-
     const [provider, setProvider] = useState<string>(Object.keys(TVService)[0])
-
-    const [category, setCategory] = useState('');
     const [videos, setVideos] = useState<TVideosRec[]>([]);
-    const [videosCategory, setVideosCategory] = useState<TVideosRec[]>([]);
-    const [videosList, setVideosList] = useState<TVideosRec[]>([]);
-
     const [searchVideos, setSearchVideos] = useState<TVideo[]>([]);
     const [favouriteVideos, setFavouriteVideos] = useState<TVideo[]>([]);
-
-    const [videoDetail, setVideoDetail] = useState<TVideoWithSource>({} as TVideoWithSource);
-    const [playingVideo, setPlayingVideo] = useState<{ url: string, playTitle: string, title: string, index: number, source: string, sourceEps: { href: string, ep: string }[] }>();
-
 
     const tvService = TVService[provider]
 
@@ -71,42 +59,35 @@ export const useVideo = (nav: TNavContext) => {
         setVideos(videos || [])
     }
 
-    const getVideoCategory = async (path: string, category: string) => {
+    const getVideoCategory = async (path: string) => {
         const videos = await withErrBound(tvService.getVideoCategory(path))
         if (!videos) {
-            return
+            return []
         }
-
-        if (videos.length === 1) {
-            setVideosList(videos)
-            nav.setPage('list')
-        } else {
-            setCategory(category)
-            setVideosCategory(videos)
-            nav.setPage('category')
-        }
+        return videos
     }
 
-    const getVideoCategoryList = async (path: string) => {
-        const videos = await withErrBound(tvService.getVideoCategoryList(path))
-        setVideosList(videos || [])
-        nav.setPage('list')
+    const getVideoCategoryMore = async (path: string, page: number) => {
+        const videos = await withErrBound(tvService.getVideoCategoryMore(path, page))
+        if (!videos) {
+            return null
+        }
+        return videos
     }
 
     const getVideoUrl = (url: string, prov = provider) => {
         return TVService[prov].getVideoUrl(url)
     }
 
-    const playOfflineVideo = (path: string, title: string) => {
-        setPlayingVideo({
+    const playOfflineVideo = async (path: string, title: string) => {
+        return {
             url: `file://${path}`,
             playTitle: title,
             title,
             index: 0,
             source: '',
             sourceEps: []
-        });
-        nav.setPage('play');
+        } as TVideoPlay
     }
 
     const playVideo = async (
@@ -118,7 +99,6 @@ export const useVideo = (nav: TNavContext) => {
             eps: { href: string, ep: string }[],
             index: number,
         },
-        isNext?: boolean
     ) => {
         const { url, title, eps, index, source, ep } = v
         const vidUrl = await withErrBound(tvService.getVideoUrl(url),
@@ -137,41 +117,14 @@ export const useVideo = (nav: TNavContext) => {
             value: ep
         })
 
-        setPlayingVideo({
+        return {
             url: vidUrl,
             playTitle: `${title} ${ep}`,
             title,
             index,
             source,
             sourceEps: eps
-        });
-        nav.setPage('play', isNext);
-    }
-
-    const playNext = () => {
-        if (!playingVideo) {
-            return
-        }
-        const nextIdx = playingVideo.index - 1
-        if (nextIdx < 0) {
-            return
-        }
-        const next = playingVideo.sourceEps[nextIdx]
-        playVideo({
-            index: nextIdx,
-            ep: next.ep,
-            url: next.href,
-            title: playingVideo.title,
-            source: playingVideo.source,
-            eps: playingVideo.sourceEps,
-        }, true)
-    }
-
-    const hasNext = () => {
-        if (!playingVideo) {
-            return false
-        }
-        return playingVideo.index - 1 >= 0
+        } as TVideoPlay
     }
 
     const setWatched = async (data: { key: string, value: string }) => {
@@ -203,14 +156,13 @@ export const useVideo = (nav: TNavContext) => {
         return `${title}:${source}`
     }
 
-    const showVideoDetail = async (v: TVideo) => {
+    const getVideoDetail = async (v: TVideo) => {
         const source = await withErrBound(tvService.getVideoSources(v.href))
         if (!source) {
-            return
+            return { ...v, source: {} } as TVideoWithSource
         }
 
-        setVideoDetail({ ...v, source });
-        nav.setPage('detail');
+        return { ...v, source } as TVideoWithSource
     }
 
     const searchVideo = async (keyword: string) => {
@@ -273,13 +225,8 @@ export const useVideo = (nav: TNavContext) => {
             init,
             error,
             videos,
-            category,
-            videosCategory,
-            videosList,
             loading,
             provider,
-            videoDetail,
-            playingVideo,
             searchVideos,
             favouriteVideos,
             providers: Object.keys(TVService),
@@ -292,15 +239,11 @@ export const useVideo = (nav: TNavContext) => {
             getVideoUrl,
             playOfflineVideo,
             playVideo,
-            playNext,
-            hasNext,
             searchVideo,
             setProvider,
-            setVideoDetail,
-            setPlayingVideo,
             getVideoCategory,
-            getVideoCategoryList,
-            showVideoDetail,
+            getVideoCategoryMore,
+            getVideoDetail,
             saveFavourite,
             isFavourite,
             removeFavourite,

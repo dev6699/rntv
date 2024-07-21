@@ -1,14 +1,20 @@
 import React from 'react';
-import { ActivityIndicator, FlatList, View } from 'react-native';
+import { ActivityIndicator, View } from 'react-native';
 
 import { i18n } from '../../i18n';
 import { theme } from '../utils';
 import { useVideoContext } from '../hooks';
 import { VideoList, VideoProvider, VideoSearch } from '../components';
+import { useScrollToTop } from '@react-navigation/native';
+import { NativeStackScreenProps } from '@react-navigation/native-stack';
+import { RootStackParamList } from './types';
 
-export const HomeScreen: React.FC<{
-  scrollRef: React.RefObject<FlatList>
-}> = ({ scrollRef }) => {
+type Props = NativeStackScreenProps<RootStackParamList, 'Home'>;
+
+export const HomeScreen = ({ navigation }: Props) => {
+  const scrollRef = React.useRef(null);
+  useScrollToTop(scrollRef);
+
   const { state, actions } = useVideoContext();
 
   const search = {
@@ -28,7 +34,7 @@ export const HomeScreen: React.FC<{
   }
 
   return (
-    <View style={{ flex: 1 }}>
+    <View style={{ flex: 1, backgroundColor: theme.blackA() }}>
       <View
         style={{
           marginVertical: 10,
@@ -65,8 +71,12 @@ export const HomeScreen: React.FC<{
       </View>
         :
         <VideoList
-          onMorePress={actions.getVideoCategory}
-          onVideoPress={actions.showVideoDetail}
+          onMorePress={(path, name) => {
+            navigation.push("Category", { path, name })
+          }}
+          onVideoPress={async (video) => {
+            navigation.push("Detail", { video })
+          }}
           videoGroup={videos}
           scrollRef={scrollRef}
           onRefresh={refreshVideos}

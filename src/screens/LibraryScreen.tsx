@@ -1,13 +1,17 @@
 import React, { useState } from 'react';
+import { NativeStackScreenProps } from '@react-navigation/native-stack';
 import { ActivityIndicator, Alert, FlatList, Image, Switch, Text, TouchableHighlight, View } from "react-native"
 
 import { i18n } from '../../i18n';
 import { Button } from '../components';
 import { imgAssets, theme } from '../utils';
+import { RootStackParamList } from './types';
 import { DownloadList as TDownloadList } from '../hooks/useDownload';
-import { useDownloadContext, useNavContext, useVideoContext } from '../hooks';
+import { useDownloadContext, useVideoContext } from '../hooks';
 
-export const LibraryScreen = () => {
+type Props = NativeStackScreenProps<RootStackParamList, 'Library'>;
+
+export const LibraryScreen = (props: Props) => {
 
     const {
         state: {
@@ -27,7 +31,7 @@ export const LibraryScreen = () => {
     const downloadCount = Object.keys(downloadList).length
 
     return (
-        <View style={{ marginTop: 20, flex: 1, position: 'relative' }}>
+        <View style={{ flex: 1, position: 'relative', backgroundColor: theme.blackA() }}>
 
             {deleting && <DeleteLoader />}
 
@@ -60,6 +64,7 @@ export const LibraryScreen = () => {
             </View>
 
             <DownloadList
+                props={props}
                 editMode={editMode}
                 selectedDelete={selectedDelete}
                 setSelectedDelete={setSelectedDelete}
@@ -302,8 +307,7 @@ const Settings = () => {
     )
 }
 
-const NoDownload = () => {
-    const { setPage } = useNavContext()
+const NoDownload = (props: Props) => {
 
     return (
         <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center', paddingTop: 20 }}>
@@ -320,7 +324,7 @@ const NoDownload = () => {
 
             <Button
                 onPress={() => {
-                    setPage('home', true)
+                    props.navigation.navigate("Home")
                 }}
                 touchStyle={{
                     borderRadius: 10,
@@ -342,8 +346,9 @@ const NoDownload = () => {
 const DownloadList: React.FC<{
     setSelectedDelete: React.Dispatch<React.SetStateAction<TDownloadList>>
     selectedDelete: TDownloadList
-    editMode: boolean
-}> = ({ setSelectedDelete, selectedDelete, editMode }) => {
+    editMode: boolean,
+    props: Props
+}> = ({ setSelectedDelete, selectedDelete, editMode, props }) => {
     const {
         actions: {
             playOfflineVideo,
@@ -393,7 +398,17 @@ const DownloadList: React.FC<{
                                 }
                                 const exist = await checkDownloadExist(d)
                                 if (exist) {
-                                    playOfflineVideo(d.path, d.name + " " + d.ep)
+                                    props.navigation.navigate('Play', {
+                                        local: true,
+                                        video: {
+                                            index: 0,
+                                            ep: d.ep,
+                                            url: d.path,
+                                            title: d.name + " " + d.ep,
+                                            source: '',
+                                            eps: [],
+                                        }
+                                    })
                                 } else {
                                     await markDownloadMissing(d)
                                 }

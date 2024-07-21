@@ -1,8 +1,9 @@
 import React, { useEffect, useRef } from 'react';
 import { View } from 'react-native';
 
-import videojs from 'video.js';
-// import 'video.js/dist/video-js.css';
+//@ts-ignore
+import videojs from 'video.js/dist/video'
+import 'video.js/dist/video-js.min.css'
 import Player from 'video.js/dist/types/player';
 
 const getOptions = (uri: string) => {
@@ -70,8 +71,7 @@ export const Video: React.FC<{ uri: string }> = ({ uri }) => {
         videoRef.current!.appendChild(videoElement);
         const options = getOptions(uri);
 
-        const player = playerRef.current = videojs(videoElement, options, () => {
-        });
+        const player = playerRef.current = videojs(videoElement, options, () => { });
         player.focus()
 
         return () => {
@@ -84,7 +84,6 @@ export const Video: React.FC<{ uri: string }> = ({ uri }) => {
 
     return (
         <View style={{ flex: 1, display: 'flex', justifyContent: 'center', paddingHorizontal: 50 }}>
-            <link href="https://vjs.zencdn.net/8.5.2/video-js.css" rel="stylesheet" />
             <div data-vjs-player>
                 <div ref={videoRef} />
             </div>

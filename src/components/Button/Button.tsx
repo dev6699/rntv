@@ -9,12 +9,14 @@ export const Button: React.FC<{
   style?: ViewStyle;
   textStyle?: TextStyle;
   icon?: JSX.Element
-}> = ({ onPress, text, touchStyle, style, textStyle, icon }) => {
+  disabled?: boolean
+}> = ({ onPress, text, touchStyle, style, textStyle, icon, disabled }) => {
   return (
     <TouchableHighlight
       underlayColor={theme.whiteA(0.2)}
       onPress={onPress}
       style={touchStyle}
+      disabled={disabled}
     >
       <View style={{
         flexDirection: 'row',
