@@ -16,6 +16,7 @@ export type Download = {
     ep: string
     href: string
     provider: string
+    webview?: boolean
     // download is considered done once path is defined
     path?: string
     failed?: boolean
@@ -263,11 +264,13 @@ export const useDownload = (props: { getVideoUrl: (url: string, provider: string
 
         const task = FETCH_BLOB
             .config({
-                wifiOnly: true,
+                wifiOnly: wifiOnly,
                 // save to path directly when file is not encrypted
                 path: !enc ? path : undefined,
             })
-            .fetch("GET", url)
+            .fetch("GET", url, {
+                'User-Agent': 'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/126.0.0.0 Safari/537.36',
+            })
             .progress((completed, total) => {
                 // console.log('prog:', received, total)
                 if (singleUpdate) {
@@ -316,7 +319,13 @@ export const useDownload = (props: { getVideoUrl: (url: string, provider: string
         setDownloading(d.href)
 
         try {
-            const vidUrl = await props.getVideoUrl(d.href, d.provider)
+            let vidUrl: string
+            if (d.webview) {
+                vidUrl = d.href
+            } else {
+                vidUrl = await props.getVideoUrl(d.href, d.provider) || ''
+            }
+
             if (!vidUrl) {
                 downloadFailed(d)
                 return

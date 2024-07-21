@@ -36,6 +36,7 @@ Made with _[Lunacy](https://icons8.com/lunacy)_
 
 ## Main Features
 
+- Built in web browser for downloading videos from websites 📥
 - HLS Streaming 🌐
 - Video Download with AES-128 Encrypted Stream Support 🔒
 - Android TV Remote Control Support 📺
