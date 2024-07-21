@@ -3,7 +3,7 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import RNFetchBlob, { FetchBlobResponse, StatefulPromise } from "react-native-blob-util";
 
 import { i18n } from "../../i18n";
-import { Enc, VIDEO_EXT, decrypt, loadVideoChunks } from '../utils/m3u8'
+import { Enc, VIDEO_EXT, loadVideoChunks } from '../utils/m3u8'
 
 type DownloadTaskHandler<T> = (item: string, taskGroupName: string, taskName: string, id: number, singleUpdate: boolean) => Promise<T>
 
@@ -99,7 +99,12 @@ const downloadListReducer = (state: DownloadList, action: DownloadListAction): D
     }
 }
 
-export const useDownload = (props: { getVideoUrl: (url: string, provider: string) => Promise<string | undefined> }) => {
+type Props = {
+    getVideoUrl: (url: string, provider: string) => Promise<string | undefined>
+    decrypt: (enc: Enc, encryptedBytes: string) => Promise<string>
+}
+
+export const useDownload = (props: Props) => {
 
     const [downloadList, dispatch] = useReducer(downloadListReducer, {} as DownloadList)
     const [wifiOnly, setWifiOnly] = useState(true)
@@ -282,7 +287,7 @@ export const useDownload = (props: { getVideoUrl: (url: string, provider: string
         return task.then(async (res) => {
             if (enc) {
                 // decrypt and save the decrypted content to file
-                const decrypted = decrypt(enc, res.base64())
+                const decrypted = await props.decrypt(enc, res.base64())
                 try {
                     // avoid directory not exists error
                     await FS.mkdir(dir)
@@ -349,7 +354,7 @@ export const useDownload = (props: { getVideoUrl: (url: string, provider: string
                     setProgress(`${i18n.t('downloading')}... ${(completed / total * 100).toFixed(2)}%`)
                     // console.log("Progress: ", videoName, (completed / total * 100).toFixed(2))
                 },
-                5
+                enc ? 1 : 5
             )
 
             if (releasePause()) {
