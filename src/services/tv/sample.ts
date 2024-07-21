@@ -29,8 +29,10 @@ export const getHomeVideoList: TVideoProvider['getHomeVideoList'] = async () => 
         }
     ]
 };
-export const getVideoCategoryList: TVideoProvider['getVideoCategoryList'] = getHomeVideoList
 export const getVideoCategory: TVideoProvider['getVideoCategory'] = getHomeVideoList
+export const getVideoCategoryMore: TVideoProvider['getVideoCategoryMore'] = async (path, page) => {
+    return { href: path, title: '', videos: [] }
+}
 
 export const getVideoSources: TVideoProvider['getVideoSources'] = async (path) => {
     return {

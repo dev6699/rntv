@@ -4,7 +4,7 @@ import { Image, TouchableHighlight, Platform } from 'react-native';
 import { imgAssets, theme } from '../../utils';
 
 export const DownloadButton: React.FC<{ onPress: () => void, active: boolean }> = ({ onPress, active }) => {
-  if (Platform.isTV) {
+  if (Platform.isTV || Platform.OS === 'web') {
     return null;
   }
 

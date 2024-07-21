@@ -1,19 +1,32 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { FlatList, Text, View } from 'react-native';
+import { NativeStackScreenProps } from '@react-navigation/native-stack';
 
-import { useOrientation, useVideoContext } from '../hooks';
-import { VideoCard, BackButton } from '../components';
 import { theme } from '../utils';
+import { TVideosRec } from '../services';
+import { RootStackParamList } from './types';
+import { VideoCard, BackButton } from '../components';
+import { useOrientation, useVideoContext } from '../hooks';
 
-export const VideoListScreen = () => {
-  const { state, actions } = useVideoContext();
+type Props = NativeStackScreenProps<RootStackParamList, 'List'>
+
+export const VideoListScreen = ({ navigation, route }: Props) => {
+  const { actions } = useVideoContext();
 
   const { orientation, numCols } = useOrientation();
+  const { name, path } = route.params
+  const [page, setPage] = useState(1)
 
-  const list = state.videosList[0];
+  const [videoList, setVideoList] = useState<TVideosRec | null>(null)
 
-  if (!list) {
-    return null;
+  useEffect(() => {
+    const { path } = route.params
+    actions.getVideoCategoryMore(path, 1).
+      then(setVideoList)
+  }, [route.params])
+
+  if (!videoList) {
+    return null
   }
 
   return (
@@ -25,15 +38,26 @@ export const VideoListScreen = () => {
           alignItems: 'center',
           marginBottom: 10,
         }}>
-        <BackButton />
+        <BackButton onPress={navigation.goBack} />
         <Text style={{ fontSize: 20, color: theme.whiteA() }}>
-          {list.title}
+          {name}
         </Text>
       </View>
       <FlatList
+        onEndReached={async () => {
+          const videos = await actions.getVideoCategoryMore(path, page + 1)
+          if (!videos) {
+            return
+          }
+
+          const moreVideos = videos
+          moreVideos.videos = [...videoList.videos, ...videos.videos]
+          setVideoList(moreVideos)
+          setPage(p => p + 1)
+        }}
         key={orientation + numCols}
         numColumns={numCols}
-        data={list.videos}
+        data={videoList.videos}
         columnWrapperStyle={{ marginBottom: 20 }}
         renderItem={({ item, index }) => {
           return (
@@ -41,7 +65,9 @@ export const VideoListScreen = () => {
               style={{ flex: 1 / numCols }}
               video={item}
               key={item.title + index}
-              onVideoPress={() => actions.showVideoDetail(item)}
+              onVideoPress={() => {
+                navigation.push("Detail", { video: item })
+              }}
             />
           );
         }}

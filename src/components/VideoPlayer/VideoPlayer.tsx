@@ -11,11 +11,12 @@ import { TopBar } from './TopBar';
 import { theme } from '../../utils';
 
 export const VideoPlayer: React.FC<{
-  url: string;
+  url?: string;
   title: string;
   hasNext: boolean;
   playNext(): void;
-}> = ({ playNext, url, title, hasNext }) => {
+  onBack(): void;
+}> = ({ url, title, hasNext, playNext, onBack }) => {
   const videoPlayerState = useVideoPlayer();
   const {
     state: { error, loading, controlsShown },
@@ -30,9 +31,11 @@ export const VideoPlayer: React.FC<{
           alignSelf: 'stretch',
           justifyContent: 'space-between',
         }}>
-        <Video uri={url} />
+        {url &&
+          <Video uri={url} />
+        }
         {(controlsShown || Platform.OS === 'web') && (
-          <TopBar title={title} playNext={playNext} hasNext={hasNext} />
+          <TopBar title={title} playNext={playNext} hasNext={hasNext} onBack={onBack} />
         )}
 
         {Platform.OS !== 'web' &&

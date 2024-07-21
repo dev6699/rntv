@@ -1,4 +1,11 @@
 {
   "name": "rntv",
-  "displayName": "rntv"
+  "displayName": "rntv",
+  "expo": {
+    "web": {
+      "name": "rntv",
+      "output": "single",
+      "bundler": "metro"
+    }
+  }
 }

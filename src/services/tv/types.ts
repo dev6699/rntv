@@ -7,6 +7,7 @@ export type TVideo = {
 }
 export type TVideoWithSource = TVideo & { source: TVideoSources };
 export type TVideoSources = Record<string, { href: string, ep: string }[]>
+export type TVideoPlay = { url: string, title: string, index: number, source: string, sourceEps: { href: string, ep: string }[] }
 
 export type TVideoProvider = {
     /**
@@ -21,10 +22,11 @@ export type TVideoProvider = {
     getVideoCategory(path: string): Promise<TVideosRec[]>
 
     /**
-     * Called when `more` button is clicked on category screen
+     * Called when reached the end of category screen
      * @param path url to the video category list
+     * @param page next page to load
      */
-    getVideoCategoryList(path: string): Promise<TVideosRec[]>
+    getVideoCategoryMore(path: string, page: number): Promise<TVideosRec>
 
     /**
      * Called when video card is clicked
