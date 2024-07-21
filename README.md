@@ -63,6 +63,12 @@ yarn
 
 ## Development
 
+**NOTE:**
+To build your project for TV, you should change your package.json imports to import react-native as follows, so that this package is used instead of the core react-native package. [More information](https://github.com/react-native-tvos/react-native-tvos?tab=readme-ov-file#react-native-tvos)
+```
+"react-native": "npm:react-native-tvos@<version>"
+```
+
 1. For android
    ```
    yarn start
