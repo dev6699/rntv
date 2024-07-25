@@ -1,6 +1,5 @@
 import React from 'react';
 import { TouchableWithoutFeedback } from 'react-native';
-//@ts-ignore
 import RNVideo from 'react-native-video';
 import { useVideoPlayerContext } from './useVideoPlayer';
 

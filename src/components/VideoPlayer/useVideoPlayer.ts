@@ -1,11 +1,9 @@
+import "react-native-tvos"
 import React, { useRef, useState, useEffect } from "react";
 import AsyncStorage from "@react-native-async-storage/async-storage";
-import {
-    Animated, PanResponder, Platform,
-    useTVEventHandler as _useTVEventHandler, HWEvent,
-} from "react-native";
+import { Animated, PanResponder, useTVEventHandler as _useTVEventHandler, HWEvent, } from "react-native";
+import { OnLoadData, OnProgressData, OnVideoErrorData, VideoRef } from "react-native-video";
 
-// Fix windows issue
 const useTVEventHandler = _useTVEventHandler || function () { }
 
 export type TVideoPlayerContext = ReturnType<typeof useVideoPlayer>
@@ -21,21 +19,6 @@ const CONFIG = {
     CONTROL_TIMEOUT_DELAY: 10000
 } as const
 const PLAY_RATE_KEY = 'play-rate'
-
-type RNVideo = {
-    seek(time: number): void
-    dismissFullscreenPlayer(): void
-    presentFullscreenPlayer(): void
-    _root: {
-        setNativeProps(props: { fullscreen: boolean, controls: boolean }): void
-    }
-}
-
-type RNVideoData = {
-    currentTime: number
-    duration: number
-    playableDuration: number
-}
 
 export const useVideoPlayer = () => {
     const [error, setError] = useState(false);
@@ -117,7 +100,7 @@ export const useVideoPlayer = () => {
         }
     })).current
 
-    const videoPlayerRef = useRef<RNVideo>()
+    const videoPlayerRef = useRef<VideoRef | null>(null)
     const animationsRef = useRef({
         controlBar: {
             opacity: new Animated.Value(1),
@@ -126,19 +109,12 @@ export const useVideoPlayer = () => {
 
     const animations = animationsRef.current
 
-    const withData = (func: (data: RNVideoData) => void) => {
-        return (data = {} as (RNVideoData & { nativeEvent?: RNVideoData })) => {
-            // Fix data in nativeEvent on windows
-            func(data.nativeEvent || data)
-        }
-    }
-
-    const onLoad = withData((data) => {
+    const onLoad = (data: OnLoadData) => {
         setDuration(data.duration);
         setLoading(false);
-    });
+    };
 
-    const onProgress = withData((data) => {
+    const onProgress = (data: OnProgressData) => {
         if (duration === 0) {
             return
         }
@@ -157,14 +133,14 @@ export const useVideoPlayer = () => {
         position = Math.min(position, seekBarRef.current)
 
         setPlayablePosition(position)
-    });
+    }
 
     const onSeek = () => {
         setLoading(false)
     }
 
-    const onError = (err: Error) => {
-        console.log(err);
+    const onError = (err: OnVideoErrorData) => {
+        console.log(err.error);
         setLoading(false);
         setError(true);
         showControl()
@@ -185,12 +161,7 @@ export const useVideoPlayer = () => {
             duration: CONFIG.CONTROL_ANIMATION_TIMING,
             useNativeDriver: false,
         }).start()
-
-        if (Platform.OS !== 'windows') {
-            videoPlayerRef.current?.dismissFullscreenPlayer()
-        } else {
-            videoPlayerRef.current?._root.setNativeProps({ fullscreen: false, controls: false });
-        }
+        videoPlayerRef.current?.dismissFullscreenPlayer()
     }
 
     const hideControls = () => {
@@ -200,14 +171,12 @@ export const useVideoPlayer = () => {
             useNativeDriver: false,
         }).start(() => {
             setControlsShown(false)
-            if (Platform.OS !== 'windows') {
-                videoPlayerRef.current?.presentFullscreenPlayer()
-            }
+            videoPlayerRef.current?.presentFullscreenPlayer()
         })
     };
 
 
-    const actionable = (func: (player: RNVideo) => void) => {
+    const actionable = (func: (player: VideoRef) => void) => {
         if (!controlsShown || !duration || !videoPlayerRef.current) {
             return
         }

@@ -10436,13 +10436,13 @@ __metadata:
   languageName: node
   linkType: hard
 
-"react-native-video@npm:6.4.2":
-  version: 6.4.2
-  resolution: "react-native-video@npm:6.4.2"
+"react-native-video@npm:6.1.2":
+  version: 6.1.2
+  resolution: "react-native-video@npm:6.1.2"
   peerDependencies:
     react: "*"
     react-native: "*"
-  checksum: 10c0/54ade51db40bbff841e8545c98c14884fd76bbf99c5cd0f849df794e654bb5da176c922f9354a4cbc256ee0494ee2a80722a7817f95e33c0028b696596906d70
+  checksum: 10c0/41581f17e92038364a4f242b7a50b2b5806bbaf860095109cdaf70eab90d04aaebf3b1ab3e7be3071f93168a6377d6588e947f5bb01ca88c07c0e58c16414caa
   languageName: node
   linkType: hard
 
@@ -10972,7 +10972,7 @@ __metadata:
     react-native-safe-area-context: "npm:4.10.5"
     react-native-screens: "npm:3.31.1"
     react-native-tvos: "npm:0.74.3-0"
-    react-native-video: "npm:6.4.2"
+    react-native-video: "npm:6.1.2"
     react-native-web: "npm:~0.19.10"
     react-native-webview: "npm:^13.10.5"
     react-test-renderer: "npm:18.2.0"

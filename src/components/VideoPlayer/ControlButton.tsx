@@ -2,7 +2,7 @@ import React from 'react';
 import { TouchableHighlight } from 'react-native';
 import { theme } from '../../utils';
 
-export const ControlButton: React.FC<{ onPress?: () => void }> = ({
+export const ControlButton: React.FC<React.PropsWithChildren<{ onPress?: () => void }>> = ({
   children,
   onPress,
 }) => {

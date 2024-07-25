@@ -1,4 +1,3 @@
-// import "react-native-tvos"
 import React, { useEffect, useRef, useState } from 'react';
 import { SafeAreaView, View, Text, ActivityIndicator, Platform } from 'react-native';
 
