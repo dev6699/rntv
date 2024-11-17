@@ -26,7 +26,7 @@ export const VideoProvider: React.FC<{
             }}
             style={{
               paddingHorizontal: 15,
-              borderRadius: 12,
+              borderRadius: 5,
               backgroundColor: active ? theme.whiteA() : theme.grayA(0.4),
             }}
             textStyle={{
