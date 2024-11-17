@@ -1,7 +1,11 @@
 {
-  "name": "rntv",
-  "displayName": "rntv",
   "expo": {
+    "name": "rntv",
+    "description": "RNTV is a video streaming application",
+    "slug": "rntv",
+    "owner": "dev6699",
+    "version:": "0.0.1",
+    "githubUrl": "https://github.com/dev6699/rntv",
     "web": {
       "name": "rntv",
       "output": "single",
