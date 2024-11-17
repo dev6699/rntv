@@ -180,9 +180,10 @@ export const WebScreen = ({ }: Props) => {
           style={{
             textAlign: 'left',
             flex: 1,
-            marginLeft: 10,
-            marginRight: 10,
-            padding: 5,
+            marginLeft: 5,
+            marginRight: 5,
+            padding: 10,
+            marginVertical: 5,
             borderColor: '#ccc',
             borderWidth: 1,
             borderRadius: 5,
@@ -191,7 +192,8 @@ export const WebScreen = ({ }: Props) => {
             borderTopWidth: 0,
             borderBottomWidth: 0,
             borderRightWidth: 0,
-            borderLeftWidth: 0
+            borderLeftWidth: 0,
+            height: 40
           }}
           value={url}
           onChangeText={setUrl}
@@ -305,7 +307,8 @@ export const WebScreen = ({ }: Props) => {
             borderTopRightRadius: 10,
             padding: 10,
             paddingTop: 0,
-            height: height * 0.5, flex: 1,
+            height: height * 0.5,
+            flex: 1,
             position: 'absolute',
             backgroundColor: theme.blackA(0.9),
             borderTopWidth: 3,

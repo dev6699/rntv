@@ -24,11 +24,12 @@ export const VideoSearch: React.FC<{
         placeholderTextColor={theme.whiteA()}
         style={{
           width: '100%',
-          padding: 5,
+          padding: 10,
           paddingLeft: 10,
           color: theme.whiteA(),
           borderRadius: 5,
           backgroundColor: theme.grayA(0.4),
+          height: 40
         }}
         value={value}
         onChangeText={onChangeText}
