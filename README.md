@@ -58,7 +58,7 @@ cd rntv
 Install dependencies
 
 ```bash
-yarn
+npm i
 ```
 
 ## Development
@@ -71,13 +71,13 @@ To build your project for TV, you should change your package.json imports to imp
 
 1. For android
    ```
-   yarn start
+   npm run start
    ```
 2. For web,
    ```
-   yarn web
+   npm run web
    ```
-   Open your web browser and go to http://localhost:19006 to access the application.
+   Open your web browser and go to http://localhost:8081 to access the application.
 
 ### Add your video sources
 
@@ -150,7 +150,7 @@ To build your project for TV, you should change your package.json imports to imp
 1. For android, find `app-release.apk` at [/android/app/build/outputs/apk/release](/android/app/build/outputs/apk/release)
 
    ```
-   yarn build
+   npm run build
    ```
 
 2. For desktop, find output at [/desktop/out/rntv-desktop-linux-x64/rntv-desktop](/desktop/out/rntv-desktop-linux-x64/rntv-desktop)
@@ -158,7 +158,7 @@ To build your project for TV, you should change your package.json imports to imp
    For more information on how the output may vary depending on your environment, please refer to https://www.electronforge.io/cli.
 
    ```
-   yarn build:desktop
+   npm run build:desktop
    ```
 
 ## License
