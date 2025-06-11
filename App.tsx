@@ -1,5 +1,8 @@
+// import "react-native-tvos"
+import 'react-native-url-polyfill/auto';
 import React, { useEffect, useRef, useState } from 'react';
-import { SafeAreaView, View, Text, ActivityIndicator, Platform } from 'react-native';
+import { View, Text, ActivityIndicator, Platform } from 'react-native';
+import { SafeAreaProvider, SafeAreaView } from 'react-native-safe-area-context';
 
 import { useVideo, VideoContext, useDownload, DownloadContext } from './src/hooks';
 import { Screen } from './src/screens';
@@ -38,44 +41,46 @@ const App = () => {
   }, [error]);
 
   return (
-    <VideoContext.Provider value={video}>
-      <DownloadContext.Provider value={download}>
-        <SafeAreaView
-          style={{
-            flex: 1,
-            backgroundColor: theme.blackA(),
-          }}>
-          {(!Platform.isTV && Platform.OS !== 'web') &&
-            <View style={{ height: 0, width: 0, overflow: 'hidden' }}>
-              <WebWorker
-                data={decryptData}
-                onDone={(decrypted) => {
-                  if (decryptCh.current) {
-                    decryptCh.current(decrypted)
-                    decryptCh.current = null
-                    setDecryptData(undefined)
-                  }
-                }} />
-            </View>
-          }
-          {error !== '' && <Error text={error} />}
-          {video.state.loading && video.state.init && (
-            <ActivityIndicator
-              color={theme.primary}
-              size={48}
-              style={{
-                right: 20,
-                top: 20,
-                alignSelf: 'flex-end',
-                position: 'absolute',
-                zIndex: 99,
-              }}
-            />
-          )}
-          <Screen />
-        </SafeAreaView>
-      </DownloadContext.Provider>
-    </VideoContext.Provider>
+    <SafeAreaProvider>
+      <VideoContext.Provider value={video}>
+        <DownloadContext.Provider value={download}>
+          <SafeAreaView
+            style={{
+              flex: 1,
+              backgroundColor: theme.blackA(),
+            }}>
+            {(!Platform.isTV && Platform.OS !== 'web') &&
+              <View style={{ height: 0, width: 0, overflow: 'hidden' }}>
+                <WebWorker
+                  data={decryptData}
+                  onDone={(decrypted) => {
+                    if (decryptCh.current) {
+                      decryptCh.current(decrypted)
+                      decryptCh.current = null
+                      setDecryptData(undefined)
+                    }
+                  }} />
+              </View>
+            }
+            {error !== '' && <Error text={error} />}
+            {video.state.loading && video.state.init && (
+              <ActivityIndicator
+                color={theme.primary}
+                size={48}
+                style={{
+                  right: 20,
+                  top: 20,
+                  alignSelf: 'flex-end',
+                  position: 'absolute',
+                  zIndex: 99,
+                }}
+              />
+            )}
+            <Screen />
+          </SafeAreaView>
+        </DownloadContext.Provider>
+      </VideoContext.Provider>
+    </SafeAreaProvider>
   );
 };
 
