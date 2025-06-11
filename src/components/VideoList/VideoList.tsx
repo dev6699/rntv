@@ -12,7 +12,7 @@ export const VideoList: React.FC<{
   videoGroup: TVideosRec[];
   onVideoPress: (v: TVideo) => void;
   onMorePress: (path: string, name: string) => void;
-  scrollRef?: React.RefObject<FlatList>
+  scrollRef?: React.RefObject<FlatList | null>
   onRefresh?: () => Promise<void>
 }> = ({ videoGroup, onVideoPress, onMorePress, scrollRef, onRefresh }) => {
   const { numCols } = useOrientation();

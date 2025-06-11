@@ -11,6 +11,7 @@ export const Video: React.FC<{ uri: string }> = ({ uri }) => {
       hasTVPreferredFocus={false}
       onPress={events.onScreenTouch}>
       <RNVideo
+        controls={false}
         ref={refs.videoPlayerRef}
         resizeMode={'contain'}
         paused={state.paused}

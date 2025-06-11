@@ -1,7 +1,7 @@
 import type * as TVOS from "react-native-tvos"
 import React, { useRef, useState, useEffect } from "react";
 import AsyncStorage from "@react-native-async-storage/async-storage";
-import { Animated, PanResponder, useTVEventHandler as _useTVEventHandler, HWEvent } from "react-native";
+import { StatusBar, Animated, PanResponder, useTVEventHandler as _useTVEventHandler, HWEvent } from "react-native";
 import { OnLoadData, OnProgressData, OnVideoErrorData, VideoRef } from "react-native-video";
 
 const useTVEventHandler = _useTVEventHandler || function () { }
@@ -33,7 +33,7 @@ export const useVideoPlayer = () => {
     const [seeking, setSeeking] = useState(false)
 
     const currentTimeRef = useRef(currentTime)
-    const selectedTargetRef = useRef<number>()
+    const selectedTargetRef = useRef<number>(undefined)
 
     useEffect(() => {
         (async () => {
@@ -161,7 +161,7 @@ export const useVideoPlayer = () => {
             duration: CONFIG.CONTROL_ANIMATION_TIMING,
             useNativeDriver: false,
         }).start()
-        videoPlayerRef.current?.dismissFullscreenPlayer()
+        StatusBar.setHidden(false, 'fade')
     }
 
     const hideControls = () => {
@@ -171,7 +171,7 @@ export const useVideoPlayer = () => {
             useNativeDriver: false,
         }).start(() => {
             setControlsShown(false)
-            videoPlayerRef.current?.presentFullscreenPlayer()
+            StatusBar.setHidden(true, 'fade')
         })
     };
 
