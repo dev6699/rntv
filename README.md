@@ -72,6 +72,7 @@ To build your project for TV, you should change your package.json imports to imp
 1. For android
    ```
    npm run start
+   npm run android
    ```
 2. For web,
    ```

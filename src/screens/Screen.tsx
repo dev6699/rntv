@@ -21,10 +21,13 @@ const Stack = createNativeStackNavigator<RootStackParamList>();
 const Tab = createBottomTabNavigator<RootStackParamList>();
 
 export const Screen = () => {
+  const showHomeTabs = (!Platform.isTV && Platform.OS !== 'web')
+  const initialRouteName = showHomeTabs ? "HomeTabs" : "Home"
+
   return (
     <NavigationContainer>
       <Stack.Navigator
-        initialRouteName="HomeTabs"
+        initialRouteName={initialRouteName}
         screenOptions={{
           header: () => null,
           contentStyle: {
@@ -32,7 +35,7 @@ export const Screen = () => {
           }
         }}
       >
-        {(!Platform.isTV && Platform.OS !== 'web') ?
+        {showHomeTabs ?
           <Stack.Screen name="HomeTabs" component={Tabs} />
           :
           <Stack.Screen name="Home" component={HomeScreen} />

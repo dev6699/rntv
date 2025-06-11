@@ -1,5 +1,5 @@
 import React from 'react';
-import { ActivityIndicator, View } from 'react-native';
+import { ActivityIndicator, FlatList, View } from 'react-native';
 
 import { i18n } from '../../i18n';
 import { theme } from '../utils';
@@ -12,7 +12,7 @@ import { RootStackParamList } from './types';
 type Props = NativeStackScreenProps<RootStackParamList, 'Home'>;
 
 export const HomeScreen = ({ navigation }: Props) => {
-  const scrollRef = React.useRef(null);
+  const scrollRef = React.useRef<FlatList>(null);
   useScrollToTop(scrollRef);
 
   const { state, actions } = useVideoContext();

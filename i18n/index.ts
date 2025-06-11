@@ -2,7 +2,9 @@ import { I18n } from "i18n-js";
 import { NativeModules } from 'react-native'
 
 // For Android
-const locale = NativeModules.I18nManager?.localeIdentifier.split('_')[0] || 'en'
+// const locale = NativeModules.I18nManager?.localeIdentifier.split('_')[0] || 'en'
+// TODO: fix me
+const locale = 'en'
 
 type Translation = {
     search: string
