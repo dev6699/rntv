@@ -402,7 +402,7 @@ export const VideoDetailScreen = ({ navigation, route }: Props) => {
         <Text style={{ color: theme.blackA() }}>{i18n.t('downloading')}...</Text>
         <Button
           onPress={() => {
-            navigation.navigate("Library")
+            navigation.navigate("HomeTabs", { screen: 'Library' })
           }}
           textStyle={{
             color: theme.primary

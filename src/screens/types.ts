@@ -1,8 +1,14 @@
-import { TVideo, } from "../services";
+import { NavigatorScreenParams } from "@react-navigation/native";
+import { TVideo } from "../services";
+
+type HomeTabParamList = {
+    Home: undefined;
+    Library: undefined;
+    Web: undefined;
+};
 
 export type RootStackParamList = {
-    HomeTabs: undefined
-
+    HomeTabs: NavigatorScreenParams<HomeTabParamList>
     Home: undefined
     Library: undefined
     Web: undefined
