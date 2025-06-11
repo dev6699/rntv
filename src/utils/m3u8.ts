@@ -5,6 +5,8 @@ import { Buffer } from 'buffer'
 export const VIDEO_EXT = '.ts'
 const PNG_EXT = '.png'
 const BMP_EXT = '.bmp'
+const M4S_EXT = '.m4s'
+const JPG_EXT = '.jpg'
 
 export type Enc = { key: Buffer, iv: string } | null
 
@@ -15,21 +17,15 @@ export const loadVideoChunks = async (url: string): Promise<[string[], Enc]> => 
 
     const res = await axios.get(url)
 
-    if ((res.data as string).includes('m3u8')) {
+    if ((res.data).includes('m3u8')) {
         const lines: string[] = res.data.split('\n')
-        let m3u8 = lines.find(l => l.includes('m3u8'))!
+        let m3u8 = lines.find(l => l.includes('m3u8'))
+        if (!m3u8) {
+            return [[url], null]
+        }
 
-        if (!(m3u8!.startsWith('http://') || m3u8!.startsWith('https://'))) {
-            const urlParts = url.split('/')
-            const hostname = urlParts[0] + "//" + urlParts[2]
-            if (!m3u8?.startsWith('/')) {
-                const last = url.split('/')
-                last.pop()
-                m3u8 = last.join('/') + '/' + m3u8
-            } else {
-                m3u8 = hostname + m3u8
-            }
-
+        if (!(m3u8.startsWith('http://') || m3u8.startsWith('https://'))) {
+            m3u8 = getUrl(url, m3u8)
         }
         return loadVideoChunks(m3u8)
     }
@@ -38,9 +34,6 @@ export const loadVideoChunks = async (url: string): Promise<[string[], Enc]> => 
 
     let enc: Enc = null
     const files: string[] = []
-    const urlParts = url.split('/')
-    urlParts.splice(urlParts.length - 1)
-    const vidUrl = urlParts.join('/')
     for (const line of lines) {
         if (line.startsWith('#EXT-X-KEY')) {
             let iv = '0x00000000000000000000000000000000'
@@ -53,16 +46,8 @@ export const loadVideoChunks = async (url: string): Promise<[string[], Enc]> => 
             let keyUrl = line.split('URI="')[1]
             keyUrl = keyUrl.split('"')[0]
 
-            if (!(keyUrl!.startsWith('http://') || keyUrl!.startsWith('https://'))) {
-                const urlParts = url.split('/')
-                const hostname = urlParts[0] + "//" + urlParts[2]
-                if (keyUrl.startsWith('/')) {
-                    keyUrl = hostname + keyUrl
-                } else {
-                    urlParts.pop()
-                    const baseUrl = urlParts.join('/')
-                    keyUrl = baseUrl + '/' + keyUrl
-                }
+            if (!(keyUrl.startsWith('http://') || keyUrl.startsWith('https://'))) {
+                keyUrl = getUrl(url, keyUrl)
             }
             const res = await axios.get(keyUrl, {
                 responseType: 'arraybuffer'
@@ -79,29 +64,21 @@ export const loadVideoChunks = async (url: string): Promise<[string[], Enc]> => 
             line.endsWith(PNG_EXT) ||
             line.includes(PNG_EXT + "?") ||
             line.endsWith(BMP_EXT) ||
-            line.includes(BMP_EXT + "?")
+            line.includes(BMP_EXT + "?") ||
+            line.endsWith(JPG_EXT) ||
+            line.includes(JPG_EXT + "?") ||
+            line.endsWith(M4S_EXT) ||
+            line.includes(M4S_EXT + "?")
         ) {
             if (line.startsWith('http://') || line.startsWith('https://')) {
                 files.push(line)
             } else {
-                const lineParts = line.split('/')
-                const name = lineParts.pop()!
-                let _line = line
-
-                if (vidUrl.includes('//')) { }
-                const _vidUrl = vidUrl.split('//').join('/')
-                if (_vidUrl.includes(lineParts.join('/'))) {
-                    _line = name
-                }
-
-                if (_line.startsWith('/')) {
-                    files.push(_vidUrl + _line)
-                } else {
-                    files.push(_vidUrl + '/' + _line)
-                }
+                const vidUrl = getUrl(url, line)
+                files.push(vidUrl)
             }
         }
     }
+
     return [files, enc]
 }
 
@@ -117,4 +94,17 @@ export const decrypt = (enc: Enc, encryptedBytes: string) => {
 
     const decryptedBytes = aesCbc.decrypt(new Uint8Array(Buffer.from(encryptedBytes, 'base64')));
     return Buffer.from(decryptedBytes).toString('base64')
+}
+
+const getUrl = (oriPath: string, path: string) => {
+    const urlObj = new URL(oriPath)
+    const parts = urlObj.pathname.split('/').filter(p => p)
+    parts.pop()
+    const baseURL = oriPath.split(urlObj.pathname)[0] + '/' + parts.join('/')
+
+    if (!path?.startsWith('/')) {
+        return baseURL + '/' + path
+    }
+
+    return baseURL + path
 }
