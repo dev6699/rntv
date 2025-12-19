@@ -1,5 +1,5 @@
 import React from 'react';
-import { TouchableWithoutFeedback } from 'react-native';
+import { View, Pressable } from 'react-native';
 import RNVideo from 'react-native-video';
 import { useVideoPlayerContext } from './useVideoPlayer';
 
@@ -7,10 +7,9 @@ export const Video: React.FC<{ uri: string }> = ({ uri }) => {
   const { state, refs, events } = useVideoPlayerContext();
 
   return (
-    <TouchableWithoutFeedback
-      hasTVPreferredFocus={false}
-      onPress={events.onScreenTouch}>
+    <View style={{ flex: 1, position: "relative" }}>
       <RNVideo
+        pointerEvents='none'
         controls={false}
         ref={refs.videoPlayerRef}
         resizeMode={'contain'}
@@ -30,6 +29,15 @@ export const Video: React.FC<{ uri: string }> = ({ uri }) => {
         }}
         source={{ uri }}
       />
-    </TouchableWithoutFeedback>
+      <Pressable
+        onPress={events.onScreenTouch}
+        style={{
+          position: 'absolute',
+          height: '100%',
+          width: '100%',
+        }}
+      />
+    </View >
+
   );
 };
