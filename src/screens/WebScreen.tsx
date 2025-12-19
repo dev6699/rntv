@@ -1,4 +1,4 @@
-import { ActivityIndicator, ScrollView, Text, TextInput, View } from 'react-native';
+import { ActivityIndicator, Alert, ScrollView, Text, TextInput, View } from 'react-native';
 import React, { useRef, useState } from 'react';
 import { WebView } from 'react-native-webview';
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
@@ -81,6 +81,7 @@ export const WebScreen = ({ }: Props) => {
   const { actions: { addDownloads } } = useDownloadContext()
 
   const webViewRef = useRef<WebView>(null);
+  const activeURL = useRef('')
 
   const [key, setKey] = useState(0)
   const [url, setUrl] = useState(HOME_URL);
@@ -142,6 +143,7 @@ export const WebScreen = ({ }: Props) => {
   };
 
   const handleNewPress = (u: string) => {
+    activeURL.current = u
     setCurrentUrl(u);
     setUrl(u)
   }
@@ -239,6 +241,44 @@ export const WebScreen = ({ }: Props) => {
           setLoading(true)
           setLinks(new Set())
           setIFrames([])
+        }}
+        onShouldStartLoadWithRequest={(event) => {
+          const allowed = event.url.startsWith('http')
+          if (!allowed) {
+            return false
+          }
+
+          if (activeURL.current) {
+            const activeHostname = new URL(activeURL.current).hostname
+            const newHostname = new URL(event.url).hostname
+            if (activeHostname !== newHostname) {
+              Alert.alert(
+                "External Link",
+                `Do you want to open this URL?\n\n${event.url}`,
+                [
+                  {
+                    text: "Cancel",
+                    onPress: () => {
+                    },
+                    style: "cancel"
+                  },
+                  {
+                    text: "OK",
+                    onPress: () => {
+                      activeURL.current = event.url
+                      setCurrentUrl(event.url)
+                      setUrl(event.url)
+
+                    }
+                  }
+                ],
+                { cancelable: true }
+              );
+              return false
+            }
+          }
+          activeURL.current = event.url
+          return true
         }}
         onLoadEnd={() => {
           webViewRef.current?.injectJavaScript(INJECTED_VIDEO_IFRAME)
