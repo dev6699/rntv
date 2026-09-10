@@ -1,4 +1,4 @@
 module.exports = {
-  presets: ['babel-preset-expo'],
-  ignore: ['node_modules/video.js']
+  presets: ['module:@react-native/babel-preset'],
+  plugins: ['@babel/plugin-transform-export-namespace-from'],
 };

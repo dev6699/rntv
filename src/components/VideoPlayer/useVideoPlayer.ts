@@ -1,10 +1,10 @@
-import type * as TVOS from "react-native-tvos"
 import React, { useRef, useState, useEffect } from "react";
 import AsyncStorage from "@react-native-async-storage/async-storage";
-import { StatusBar, Animated, PanResponder, useTVEventHandler as _useTVEventHandler, HWEvent } from "react-native";
+import { StatusBar, Animated, PanResponder } from "react-native";
+import type { HWEvent } from "react-native-tvos";
 import { OnLoadData, OnProgressData, OnVideoErrorData, VideoRef } from "react-native-video";
+import useTVEventHandler from './tvEventHandler';
 
-const useTVEventHandler = _useTVEventHandler || function () { }
 
 export type TVideoPlayerContext = ReturnType<typeof useVideoPlayer>
 
