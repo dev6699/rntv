@@ -48,5 +48,5 @@ export const getVideoSources: TVideoProvider['getVideoSources'] = async (path) =
 }
 
 export const getVideoUrl: TVideoProvider['getVideoUrl'] = async (path: string) => {
-    return 'http://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4'
+    return 'https://docs.evostream.com/sample_content/assets/bun33s.mp4'
 }

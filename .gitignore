@@ -33,6 +33,7 @@ local.properties
 .cxx/
 *.keystore
 !debug.keystore
+.kotlin/
 
 # node.js
 #
@@ -82,3 +83,6 @@ src/services/tv/*
 # expo web
 .expo
 web-build
+
+downloads
+.download
